@@ -1,9 +1,19 @@
+import React, { useState } from "react";
+
 export default function MessageInput () {
+  const [ title, setTitle ] = useState("");
+  const [ message, setMessage ] = useState("");
+
+  const handleTitleChange = (e: any) => {
+    setTitle(e.target.value);
+  };
+
+  const handleMessageChange = (e: any) => {
+    setMessage(e.target.value);
+  };
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-
-    const title = e.target.querySelector("input[name='title']").value;
-    const message = e.target.querySelector("textarea[name='message']").value;
 
     const req = await fetch(`${import.meta.env.VITE_API_BASE || "/api"}/messages`, {
       method: "POST",
@@ -22,9 +32,9 @@ export default function MessageInput () {
   return (
     <div className="border">
       <form action="#" onSubmit={handleSubmit}>
-        <input className="border" type="text" name="title" />
+        <input className="border" type="text" name="title" onChange={handleTitleChange}/>
         <br />
-        <textarea className="border" name="message"></textarea>
+        <textarea className="border" name="message" onChange={handleMessageChange}></textarea>
         <br />
         <button className="border" type="submit">Submit</button>
       </form>
