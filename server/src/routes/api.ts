@@ -1,19 +1,9 @@
 import express from "express";
+import messages from "./api/messages";
 
 const api = express.Router();
 
-api.get("/messages", (_req, res) => {
-  res.json({ ok: true, timestamp: new Date().toISOString() });
-});
-
-api.post("/messages", (req, res) => {
-  const { title, message } = req.body ?? {};
-
-  res.json({
-    title: title,
-    message: message
-  });
-});
+api.use("/messages", messages);
 
 api.get("/health", (_req, res) => {
   res.json({ ok: true, timestamp: new Date().toISOString() });
