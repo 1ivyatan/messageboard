@@ -1,18 +1,7 @@
 import express from "express";
+import api from "./api";
 
 const routes = express.Router();
-
-routes.get("/api/health", (_req, res) => {
-  res.json({ ok: true, timestamp: new Date().toISOString() });
-});
-
-routes.get("/api/hello", (_req, res) => {
-  res.json({ ok: true, timestamp: new Date().toISOString() });
-});
-
-routes.post("/api/echo", (req, res) => {
-  const { message } = req.body ?? {};
-  res.json({ message: message ?? "Nothing received" });
-});
+routes.use("/api", api);
 
 export default routes;
