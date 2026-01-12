@@ -1,18 +1,9 @@
 import express from "express";
+import * as messagesController from "../../controllers/messagesController";
 
 const messages = express.Router();
 
-messages.get("/", (_req, res) => {
-  res.json({ ok: true, timestamp: new Date().toISOString() });
-});
-
-messages.post("/", (req, res) => {
-  const { title, message } = req.body ?? {};
-
-  res.json({
-    title: title,
-    message: message
-  });
-});
+messages.get("/", messagesController.get);
+messages.post("/", messagesController.post);
 
 export default messages;
