@@ -1,9 +1,10 @@
 import express from "express";
 import messages from "./api/messages";
+import auth from "../middleware/auth";
 
 const api = express.Router();
 
-api.use("/messages", messages);
+api.use("/messages", auth, messages);
 
 api.get("/health", (_req, res) => {
   res.json({ ok: true, timestamp: new Date().toISOString() });
