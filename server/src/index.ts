@@ -13,20 +13,6 @@ app.use(cors());
 app.use(express.json());
 app.use(routes);
 
-// API routes
-app.get("/api/health", (_req, res) => {
-  res.json({ ok: true, timestamp: new Date().toISOString() });
-});
-
-app.get("/api/hello", (_req, res) => {
-  res.json({ ok: true, timestamp: new Date().toISOString() });
-});
-
-app.post("/api/echo", (req, res) => {
-  const { message } = req.body ?? {};
-  res.json({ message: message ?? "Nothing received" });
-});
-
 // Serve static client in production
 if (process.env.NODE_ENV === "production") {
   const clientDist = path.resolve(__dirname, "../../client/dist");
