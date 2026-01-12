@@ -6,6 +6,15 @@ api.get("/messages", (_req, res) => {
   res.json({ ok: true, timestamp: new Date().toISOString() });
 });
 
+api.post("/messages", (req, res) => {
+  const { title, message } = req.body ?? {};
+
+  res.json({
+    title: title,
+    message: message
+  });
+});
+
 api.get("/health", (_req, res) => {
   res.json({ ok: true, timestamp: new Date().toISOString() });
 });

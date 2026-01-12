@@ -5,7 +5,7 @@ export default function MessageInput () {
     const title = e.target.querySelector("input[name='title']").value;
     const message = e.target.querySelector("textarea[name='message']").value;
 
-    const res = await fetch(`${import.meta.env.VITE_API_BASE || "/api"}/messages`, {
+    const req = await fetch(`${import.meta.env.VITE_API_BASE || "/api"}/messages`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -14,7 +14,9 @@ export default function MessageInput () {
       }),
     });
 
-    console.log(res)
+    const response = await req.json();
+
+    console.log(response)
   };
 
   return (
