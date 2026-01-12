@@ -2,12 +2,15 @@ import express from "express";
 import cors from "cors";
 import path from "node:path";
 import dotenv from "dotenv";
-import routes from "./routes/routes";
+import routes from "./routes";
+import * as database from "./database";
 
-dotenv.config();
+dotenv.config({ debug: true, path: '../.env' });
+
+database.connect();
 
 const app = express();
-const PORT = Number(process.env.PORT || 4000);
+const PORT = Number(process.env.SERVER_PORT);
 
 app.use(cors());
 app.use(express.json());
