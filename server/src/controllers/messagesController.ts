@@ -16,7 +16,7 @@ export async function post(req: any, res: any): Promise<void> {
     title: title,
     body: body,
     ip: req.ip,
-    date: Date.now()
+    timestamp: Date.now()
   });
 
   try {
