@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import MessageInputContainer from "./containers/MessageInputContainer";
+import MessagesContainer from "./containers/MessagesContainer";
 
 type Health = { ok: boolean; timestamp: string };
 
@@ -27,6 +28,7 @@ export default function App() {
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", padding: 24 }}>
       <MessageInputContainer />
+      <MessagesContainer />
 
       <h1>React + Express + TypeScript</h1>
       <p>Health: {health ? <code>{JSON.stringify(health)}</code> : "Loading..."}</p>
