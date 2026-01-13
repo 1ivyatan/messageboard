@@ -4,10 +4,10 @@ import auth from "../middleware/auth";
 
 const api = express.Router();
 
-api.use("/messages", auth, messages);
+api.use("/messages", messages);
 
 api.get("/health", (_req, res) => {
-  res.json({ ok: true, timestamp: new Date().toISOString() });
+  res.json({ ok: true, timestamp: new Date().toISOString(), h: _req.ip  });
 });
 
 api.post("/echo", (req, res) => {
