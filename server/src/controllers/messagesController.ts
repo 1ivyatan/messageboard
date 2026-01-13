@@ -11,11 +11,10 @@ export async function get(req: any, res: any): Promise<void> {
 
 export async function post(req: any, res: any): Promise<void> {
   const { title, body } = req.body ?? {};
-  const clientIp = req.ip;
 
   const message = new messageModel({
     title: title,
-    messageBody: body,
+    body: body,
     ip: req.ip,
     date: Date.now()
   });

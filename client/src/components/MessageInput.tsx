@@ -20,7 +20,7 @@ export default function MessageInput () {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         title: title,
-        messageBody: message
+        body: message
       }),
     });
 
