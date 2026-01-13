@@ -17,7 +17,6 @@ export default function MessagesContainer() {
   return <div className="border">
     {
       data.map((item: any) => {
-        console.log()
         return (
           <MessageBox
             key={"message_" + item._id}
