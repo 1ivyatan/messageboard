@@ -19,7 +19,8 @@ export default function MessagesContainer() {
       data.map((item: any) => {
         console.log()
         return (
-          <MessageBox 
+          <MessageBox
+            key={"message_" + item._id}
             title={item.title}
             body={item.body}
             timestamp={item.timestamp}
