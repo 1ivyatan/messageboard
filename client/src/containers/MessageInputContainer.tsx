@@ -1,5 +1,5 @@
 import MessageForm from "../components/MessageForm"
 
-export function MessageInput() {
+export default function MessageInputContainer() {
   return <MessageForm />
 }

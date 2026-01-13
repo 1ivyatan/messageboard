@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import MessageInput from "./components/MessageForm";
+import MessageInputContainer from "./containers/MessageInputContainer";
 
 type Health = { ok: boolean; timestamp: string };
 
@@ -26,7 +26,7 @@ export default function App() {
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", padding: 24 }}>
-      <MessageInput />
+      <MessageInputContainer />
 
       <h1>React + Express + TypeScript</h1>
       <p>Health: {health ? <code>{JSON.stringify(health)}</code> : "Loading..."}</p>
