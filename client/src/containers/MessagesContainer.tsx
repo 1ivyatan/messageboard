@@ -17,8 +17,13 @@ export default function MessagesContainer() {
   return <div className="border">
     {
       data.map((item) => {
+        console.log()
         return (
-          <MessageBox />
+          <MessageBox 
+            title={item.title}
+            body={item.body}
+            timestamp={item.timestamp}
+          />
         )
       })
     }

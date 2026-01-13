@@ -1,4 +1,7 @@
 export default function MessageBox(props: any)
 {
-  return <p>test!</p>;
+  return <div>
+    <p>{ props.title } | { props.timestamp }</p>
+    <p>{ props.body }</p>
+  </div>;
 }
