@@ -5,6 +5,7 @@ export async function get(req: any, res: any): Promise<void> {
   const messages = await messageModel
     .find()
     .select({
+      _id: 1,
       title: 1,
       body: 1,
       timestamp: 1
