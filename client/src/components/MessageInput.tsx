@@ -20,12 +20,12 @@ export default function MessageInput () {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         title: title,
-        message: message
+        messageBody: message
       }),
     });
 
     const response = await req.json();
-
+    
     console.log(response)
   };
 
