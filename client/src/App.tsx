@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import MessageInput from "./components/MessageInput";
+import MessageInput from "./components/MessageForm";
 
 type Health = { ok: boolean; timestamp: string };
 

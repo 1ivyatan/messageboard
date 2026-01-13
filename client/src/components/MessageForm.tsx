@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function MessageInput () {
+export default function MessageForm () {
   const [ title, setTitle ] = useState("");
   const [ message, setMessage ] = useState("");
 
