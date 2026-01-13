@@ -2,7 +2,14 @@ import express from "express";
 import { messageModel } from "../models/message";
 
 export async function get(req: any, res: any): Promise<void> {
-  const messages = await messageModel.find().exec();
+  const messages = await messageModel
+    .find()
+    .select({
+      title: 1,
+      body: 1,
+      timestamp: 1
+    })
+    .exec();
   
   res.json(messages);
 
