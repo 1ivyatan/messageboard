@@ -1,5 +1,5 @@
 import express from "express";
-import * as messagesController from "../../controllers/messagesController";
+import * as messagesController from "../../../controllers/messagesController";
 import rateLimit from "express-rate-limit";
 
 const messages = express.Router();
