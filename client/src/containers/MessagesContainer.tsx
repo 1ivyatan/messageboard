@@ -20,6 +20,7 @@ export default function MessagesContainer() {
         return (
           <MessageBox
             key={"message_" + item._id}
+            id={item._id}
             title={item.title}
             body={item.body}
             timestamp={item.timestamp}

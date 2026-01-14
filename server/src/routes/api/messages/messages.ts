@@ -1,10 +1,11 @@
 import express from "express";
-import * as messagesController from "../../../controllers/messagesController";
 import rateLimit from "express-rate-limit";
+import * as messagesController from "../../../controllers/messagesController";
+import vote from "./vote";
 
 const messages = express.Router();
 
-messages.get("/", messagesController.get);
+messages.get("/", messagesController.index);
 
 const postLimter = rateLimit({
   windowMs: 10000,
@@ -17,5 +18,7 @@ const postLimter = rateLimit({
   }
 })
 messages.post("/", postLimter, messagesController.post);
+
+messages.use("/:id/vote", vote);
 
 export default messages;

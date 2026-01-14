@@ -1,7 +1,7 @@
 import express from "express";
 import { messageModel } from "../models/message";
 
-export async function get(req: any, res: any): Promise<void> {
+export async function index(req: any, res: any): Promise<void> {
   const messages = await messageModel
     .find()
     .select({
