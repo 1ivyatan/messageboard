@@ -14,15 +14,8 @@ const messageSchema = new mongoose.Schema({
     type: Date
   },
   votes: {
-    upCount: {
-      type: Number
-    },
-    downCount: {
-      type: Number
-    },
-    totalCount: {
-      type: Number
-    }
+    type: Number,
+    default: 0
   }
 });
 

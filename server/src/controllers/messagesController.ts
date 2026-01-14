@@ -8,13 +8,14 @@ export async function index(req: any, res: any): Promise<void> {
       _id: 1,
       title: 1,
       body: 1,
-      timestamp: 1
+      timestamp: 1,
+      votes: 1
     })
     .sort({
       timestamp: -1
     })
     .exec();
-  
+
   res.json(messages);
 
   res.end();
@@ -27,7 +28,8 @@ export async function create(req: any, res: any): Promise<void> {
     title: title,
     body: body,
     ip: req.ip,
-    timestamp: Date.now()
+    timestamp: Date.now(),
+    votes: 0
   });
 
   try {

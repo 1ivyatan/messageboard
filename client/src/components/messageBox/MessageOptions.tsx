@@ -6,6 +6,7 @@ export default function MessageOptions(props: any) {
     <div className="flex">
       <Voting
         id={props.id}
+        votes={props.votes}
       />
     </div>
   );

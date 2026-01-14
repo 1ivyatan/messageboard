@@ -7,8 +7,9 @@ export default function Voting(props: any) {
     Down = "down"
   }
 
-  const [ vote, setVote ] = useState<Vote>(Vote.None);
-  const [ voteCount, setVoteCount ] = useState(0);
+  const [ vote, setVote ] = useState(Vote.None);
+  const [ neutralVoteCount, setNeutralVoteCount ] = useState(0);
+  const [ displayedVoteCount, setDisplayedVoteCount ] = useState(0);
 
   const handleVote = (e: any, newVote: Vote) => {
     const url = `${import.meta.env.VITE_API_BASE || "/api"}/messages/${props.id}/vote`;
@@ -34,43 +35,57 @@ export default function Voting(props: any) {
       } else {
         setVote(newVote);
       }
-      
-      console.log(props.id)
-      console.log(data)
     });
   };
 
   const getVote = () => {
     const url = `${import.meta.env.VITE_API_BASE || "/api"}/messages/${props.id}/vote`;
 
-    fetch(url, {
-      method: "GET",
-    })
+    fetch(url)
     .then(async (response) => {
-      const data = await response.json();
+        const data = await response.json();
 
-      if (data !== null) {
-        setVote(data.vote);
-      }
+        if (data != null) {
+          setVote(data.vote);
 
-        console.log(vote);
-        
-        console.log(vote);
+          switch (data.vote) {
+            case Vote.None:
+              setNeutralVoteCount(props.votes);
+              break;
+            case Vote.Up:
+              setNeutralVoteCount(props.votes - 1);
+              break;
+            case Vote.Down:
+              setNeutralVoteCount(props.votes + 1);
+              break;
+          }
+        }
     });
   };
 
   useEffect(() => {
     getVote();
+    setDisplayedVoteCount(props.votes);
   }, []);
 
   useEffect(() => {
-
-  }, [ vote ]);
+    switch (vote) {
+      case Vote.None:
+        setDisplayedVoteCount(neutralVoteCount);
+        break;
+      case Vote.Up:
+        setDisplayedVoteCount(neutralVoteCount + 1);
+        break;
+      case Vote.Down:
+        setDisplayedVoteCount(neutralVoteCount - 1);
+        break;
+      }
+  }, [vote]);
 
   return (
     <div>
       <button type="button" className={ `${Vote.Up}` } onClick={(e: any) => handleVote(e, Vote.Up)}> Up </button>
-        <span> { voteCount } </span>
+        <span> { displayedVoteCount } </span>
       <button type="button" className={ `${Vote.Down}` } onClick={(e: any) => handleVote(e, Vote.Down)}> Down </button>
     </div>
   );

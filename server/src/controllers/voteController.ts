@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import { voteModel } from "../models/vote";
+import { updateCount } from "./voteCountController";
 
 export async function show(req: any, res: any): Promise<void> {
   const message = Types.ObjectId.createFromHexString(req.params.id);
@@ -8,6 +9,9 @@ export async function show(req: any, res: any): Promise<void> {
     .findOne({
       'message': message,
       'ip': req.ip
+    })
+    .select({
+      'vote': 1
     })
     .exec();
 
@@ -35,6 +39,8 @@ export async function create(req: any, res: any): Promise<void> {
     res.json({ error: "Message was not voted" });
   }
 
+  await updateCount(message);
+
   res.end();
 }
 
@@ -51,6 +57,8 @@ export async function update(req: any, res: any): Promise<void> {
       {
         vote: vote
       });
+  
+  await updateCount(message);
 
   res.json({ message: "Message vote was updated" });
   res.end();
@@ -59,13 +67,20 @@ export async function update(req: any, res: any): Promise<void> {
 export async function destroy(req: any, res: any): Promise<void> {
   const message = Types.ObjectId.createFromHexString(req.params.id);
   
-  const voteEntry = await voteModel
+  try {
+    const voteEntry = await voteModel
     .findOneAndDelete(
       {
         'message': message,
-        'ip': req.ip
+        'ip': req.ip,
       });
 
-  res.json({ message: "Message vote was deleted" });
+    await updateCount(message);
+
+    res.json({ message: "Message vote was deleted" });
+  } catch (e: any) {
+    res.json({ message: "Message vote was not deleted" });
+  }
+
   res.end();
 }

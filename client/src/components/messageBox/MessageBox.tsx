@@ -8,6 +8,7 @@ export default function MessageBox(props: any)
       <p>{ props.body }</p>
       <MessageOptions
         id={props.id}
+        votes={props.votes}
       />
       <hr />
     </div>
