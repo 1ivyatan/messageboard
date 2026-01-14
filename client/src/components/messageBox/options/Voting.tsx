@@ -10,14 +10,14 @@ export default function Voting(props: any) {
   const [ vote, setVote ] = useState<Vote>(Vote.None);
   const [ voteCount, setVoteCount ] = useState(0);
 
-  const handleVote = (e: any, vote: Vote) => {
+  const handleVote = (e: any, newVote: Vote) => {
     const url = `${import.meta.env.VITE_API_BASE || "/api"}/messages/${props.id}/vote`;
-    const buttonClasses = e.target.classList;
-    //const method = (vote === Vote.None) 
-    //  ? "POST" 
-    //  : (buttonClasses.contains);
 
-    const method = "POST";
+    const method = (vote === Vote.None) 
+      ? "POST" 
+      : (newVote === vote)
+        ? "DELETE"
+        : "PATCH";
 
     fetch(url, {
       method: method,
@@ -28,6 +28,8 @@ export default function Voting(props: any) {
     })
     .then(async (response) => {
       const data = await response.json();
+
+      setVote(newVote);
       console.log(props.id)
       console.log(data)
     });
@@ -45,7 +47,6 @@ export default function Voting(props: any) {
       if (data !== null) {
         setVote(data.vote);
       }
-      console.log(data)
     });
   };
 
