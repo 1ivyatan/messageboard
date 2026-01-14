@@ -35,17 +35,11 @@ export default function MessageForm () {
           console.log("too fast, wait " + req.headers.get("Retry-After"))
         }
       }
-
-      
     } catch (e: any) {
       console.log(e)
     }
-
-
-    
-    
   };
-
+  
   return (
     <div className="border">
       <form action="#" onSubmit={handleSubmit}>

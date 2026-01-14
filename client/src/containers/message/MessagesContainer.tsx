@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MessageBox from "../components/MessageBox";
+import MessageBox from "../../components/messageBox/MessageBox";
 
 export default function MessagesContainer() {
   const [data, setData] = useState([]);

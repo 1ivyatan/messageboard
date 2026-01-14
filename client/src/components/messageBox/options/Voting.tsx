@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 
-export default function MessageOptions(props: any) {
-  const [ upvote, setUpvote ] = useState(false);
+export default function Voting(props: any) {
+  enum Vote {
+    None = "none",
+    Up = "up",
+    Down = "down"
+  }
+
+  const [ vote, setVote ] = useState<Vote>(Vote.None);
 
   const handleUpvote = (e: any) => {
     const url = `${import.meta.env.VITE_API_BASE || "/api"}/messages/${props.id}/vote`;
-
-    console.log(url)
 
     fetch(url, {
       method: "POST",
@@ -23,15 +27,13 @@ export default function MessageOptions(props: any) {
 
   useEffect(() => {
 
-  });
+  }, []);
 
   return (
-    <div className="flex">
-      <div>
-        <button type="button" onClick={handleUpvote}> Up </button>
-          <span> 0 </span>
-        <button type="button"> Down </button>
-      </div>
+    <div>
+      <button type="button" onClick={handleUpvote}> Up </button>
+        <span> 0 </span>
+      <button type="button"> Down </button>
     </div>
   );
 }

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import MessageInputContainer from "./containers/MessageInputContainer";
-import MessagesContainer from "./containers/MessagesContainer";
+import MessagesContainer from "./containers/message/MessagesContainer";
+import MessageInputContainer from "./containers/message/MessageInputContainer";
 
-type Health = { ok: boolean; timestamp: string };
+//type Health = { ok: boolean; timestamp: string };
 
 export default function App() {
   //const [health, setHealth] = useState<Health | null>(null);
@@ -34,6 +34,7 @@ export default function App() {
   );
   /*
   
+      
 
       <h1>React + Express + TypeScript</h1>
       <p>Health: {health ? <code>{JSON.stringify(health)}</code> : "Loading..."}</p>
