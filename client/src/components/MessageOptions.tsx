@@ -1,9 +1,15 @@
 export default function MessageOptions() {
+  const handleUpvote = (e: any) => {
+    alert("up!");
+  }
+
   return (
     <div className="flex">
-      <button type="button"> Up </button>
-      <span> 0 </span>
-      <button type="button"> Down </button>
+      <div>
+        <button type="button" onClick={handleUpvote}> Up </button>
+          <span> 0 </span>
+        <button type="button"> Down </button>
+      </div>
     </div>
   );
 }
