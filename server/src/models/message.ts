@@ -12,6 +12,17 @@ const messageSchema = new mongoose.Schema({
   },
   timestamp: {
     type: Date
+  },
+  votes: {
+    upCount: {
+      type: Number
+    },
+    downCount: {
+      type: Number
+    },
+    totalCount: {
+      type: Number
+    }
   }
 });
 
