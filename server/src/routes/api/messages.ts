@@ -12,6 +12,9 @@ const postLimter = rateLimit({
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false,
   ipv6Subnet: 56, // Set to 60 or 64 to be less aggressive, or 52 or 48 to be more aggressive
+  message: {
+    error: "Too many messages sent in this inverval."
+  }
 })
 messages.post("/", postLimter, messagesController.post);
 

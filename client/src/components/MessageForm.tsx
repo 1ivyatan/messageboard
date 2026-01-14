@@ -15,18 +15,35 @@ export default function MessageForm () {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    const req = await fetch(`${import.meta.env.VITE_API_BASE || "/api"}/messages`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: title,
-        body: message
-      }),
-    });
+    try {
+      const req = await fetch(`${import.meta.env.VITE_API_BASE || "/api"}/messages`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: title,
+          body: message
+        }),
+      });
 
-    const response = await req.json();
+      const response = await req.json();
+      console.log(response)
+
+      if (req.ok) {
+        console.log("ok")
+      } else {
+        if (req.status === 429) {
+          console.log("too fast, wait " + req.headers.get("Retry-After"))
+        }
+      }
+
+      
+    } catch (e: any) {
+      console.log(e)
+    }
+
+
     
-    console.log(response)
+    
   };
 
   return (
