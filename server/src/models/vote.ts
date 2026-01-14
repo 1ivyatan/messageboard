@@ -14,4 +14,14 @@ const voteSchema = new mongoose.Schema({
   }
 });
 
+voteSchema.index(
+  {
+    message: 1,
+    ip: 1,
+  },
+  {
+    unique: true,
+  }
+);
+
 export const voteModel = mongoose.model("Vote", voteSchema);
