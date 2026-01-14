@@ -20,7 +20,7 @@ export async function index(req: any, res: any): Promise<void> {
   res.end();
 }
 
-export async function post(req: any, res: any): Promise<void> {
+export async function create(req: any, res: any): Promise<void> {
   const { title, body } = req.body ?? {};
 
   const messageEntry = new messageModel({

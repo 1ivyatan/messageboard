@@ -17,6 +17,6 @@ const postLimter = rateLimit({
     error: "Too many messages sent in this inverval."
   }
 })
-messages.post("/", postLimter, messagesController.post);
+messages.post("/", postLimter, messagesController.create);
 
 export default messages;
