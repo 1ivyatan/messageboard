@@ -6,12 +6,11 @@ const voteSchema = new mongoose.Schema({
     ref: 'Message',
   },
   ip: {
-    type: String,
-    unique: true
+    type: String
   },
   num: {
-    type: Number,
-    enum: [-1, 1]
+    type: String,
+    enum: ["up", "down"]
   }
 });
 
