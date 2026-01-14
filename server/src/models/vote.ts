@@ -8,7 +8,7 @@ const voteSchema = new mongoose.Schema({
   ip: {
     type: String
   },
-  num: {
+  vote: {
     type: String,
     enum: ["up", "down"]
   }

@@ -23,7 +23,7 @@ export async function index(req: any, res: any): Promise<void> {
 export async function post(req: any, res: any): Promise<void> {
   const { title, body } = req.body ?? {};
 
-  const message = new messageModel({
+  const messageEntry = new messageModel({
     title: title,
     body: body,
     ip: req.ip,
@@ -31,7 +31,7 @@ export async function post(req: any, res: any): Promise<void> {
   });
 
   try {
-    await message.save();
+    await messageEntry.save();
     res.status(200);
     res.json({ message: "Message successfully sent" });
   } catch (e: any)

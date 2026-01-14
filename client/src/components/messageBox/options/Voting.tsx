@@ -16,11 +16,12 @@ export default function Voting(props: any) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        type: vote
+        vote: vote
       }),
     })
     .then(async (response) => {
       const data = await response.json();
+      console.log(props.id)
       console.log(data)
     });
   };
