@@ -3,10 +3,11 @@ import mongoose, { Schema } from 'mongoose';
 const voteSchema = new mongoose.Schema({
   message: {
     type: Schema.Types.ObjectId,
-    ref: 'Message'
+    ref: 'Message',
   },
   ip: {
-    type: String
+    type: String,
+    unique: true
   },
   num: {
     type: Number,

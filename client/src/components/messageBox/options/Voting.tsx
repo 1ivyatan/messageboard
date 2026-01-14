@@ -9,21 +9,21 @@ export default function Voting(props: any) {
 
   const [ vote, setVote ] = useState<Vote>(Vote.None);
 
-  const handleUpvote = (e: any) => {
+  const handleVote = (vote: Vote) => {
     const url = `${import.meta.env.VITE_API_BASE || "/api"}/messages/${props.id}/vote`;
 
     fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        type: "up"
+        type: vote
       }),
     })
     .then(async (response) => {
       const data = await response.json();
       console.log(data)
     });
-  }
+  };
 
   useEffect(() => {
 
@@ -31,9 +31,9 @@ export default function Voting(props: any) {
 
   return (
     <div>
-      <button type="button" onClick={handleUpvote}> Up </button>
+      <button type="button" onClick={() => handleVote(Vote.Up)}> Up </button>
         <span> 0 </span>
-      <button type="button"> Down </button>
+      <button type="button" onClick={() => handleVote(Vote.Down)}> Down </button>
     </div>
   );
 }
