@@ -8,12 +8,19 @@ export default function Voting(props: any) {
   }
 
   const [ vote, setVote ] = useState<Vote>(Vote.None);
+  const [ voteCount, setVoteCount ] = useState(0);
 
-  const handleVote = (vote: Vote) => {
+  const handleVote = (e: any, vote: Vote) => {
     const url = `${import.meta.env.VITE_API_BASE || "/api"}/messages/${props.id}/vote`;
+    const buttonClasses = e.target.classList;
+    //const method = (vote === Vote.None) 
+    //  ? "POST" 
+    //  : (buttonClasses.contains);
+
+    const method = "POST";
 
     fetch(url, {
-      method: "POST",
+      method: method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         vote: vote
@@ -26,15 +33,35 @@ export default function Voting(props: any) {
     });
   };
 
+  const getVote = () => {
+    const url = `${import.meta.env.VITE_API_BASE || "/api"}/messages/${props.id}/vote`;
+
+    fetch(url, {
+      method: "GET",
+    })
+    .then(async (response) => {
+      const data = await response.json();
+
+      if (data !== null) {
+        setVote(data.vote);
+      }
+      console.log(data)
+    });
+  };
+
+  useEffect(() => {
+    getVote();
+  }, []);
+
   useEffect(() => {
 
-  }, []);
+  }, [ vote ]);
 
   return (
     <div>
-      <button type="button" onClick={() => handleVote(Vote.Up)}> Up </button>
-        <span> 0 </span>
-      <button type="button" onClick={() => handleVote(Vote.Down)}> Down </button>
+      <button type="button" className={ `${Vote.Up}` } onClick={(e: any) => handleVote(e, Vote.Up)}> Up </button>
+        <span> { voteCount } </span>
+      <button type="button" className={ `${Vote.Down}` } onClick={(e: any) => handleVote(e, Vote.Down)}> Down </button>
     </div>
   );
 }
