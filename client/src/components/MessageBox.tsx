@@ -6,7 +6,9 @@ export default function MessageBox(props: any)
     <div>
       <p>{ props.title } | { props.timestamp }</p>
       <p>{ props.body }</p>
-      <MessageOptions />
+      <MessageOptions
+        id={props.id}
+      />
       <hr />
     </div>
   );

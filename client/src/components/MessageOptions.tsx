@@ -1,6 +1,16 @@
-export default function MessageOptions() {
+export default function MessageOptions(props: any) {
   const handleUpvote = (e: any) => {
-    alert("up!");
+    fetch(`${import.meta.env.VITE_API_BASE || "/api"}/messages/${props.id}/vote`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "up"
+      }),
+    })
+    .then(async (response) => {
+      const data = await response.json();
+      console.log(data)
+    });
   }
 
   return (
