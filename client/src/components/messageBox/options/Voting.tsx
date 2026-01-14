@@ -29,7 +29,12 @@ export default function Voting(props: any) {
     .then(async (response) => {
       const data = await response.json();
 
-      setVote(newVote);
+      if (method === "DELETE") {
+        setVote(Vote.None);
+      } else {
+        setVote(newVote);
+      }
+      
       console.log(props.id)
       console.log(data)
     });
@@ -47,6 +52,10 @@ export default function Voting(props: any) {
       if (data !== null) {
         setVote(data.vote);
       }
+
+        console.log(vote);
+        
+        console.log(vote);
     });
   };
 

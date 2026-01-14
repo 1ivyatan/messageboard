@@ -55,3 +55,17 @@ export async function update(req: any, res: any): Promise<void> {
   res.json({ message: "Message vote was updated" });
   res.end();
 }
+
+export async function destroy(req: any, res: any): Promise<void> {
+  const message = Types.ObjectId.createFromHexString(req.params.id);
+  
+  const voteEntry = await voteModel
+    .findOneAndDelete(
+      {
+        'message': message,
+        'ip': req.ip
+      });
+
+  res.json({ message: "Message vote was deleted" });
+  res.end();
+}
