@@ -19,6 +19,4 @@ const postLimter = rateLimit({
 })
 messages.post("/", postLimter, messagesController.post);
 
-messages.use("/:id/vote", vote);
-
 export default messages;

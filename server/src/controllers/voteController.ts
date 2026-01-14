@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { voteModel } from "../models/vote";
 
-export async function get(req: any, res: any): Promise<void> {
+export async function show(req: any, res: any): Promise<void> {
   const message = Types.ObjectId.createFromHexString(req.params.id);
 
   const voteEntry = await voteModel
@@ -35,5 +35,23 @@ export async function create(req: any, res: any): Promise<void> {
     res.json({ error: "Message was not voted" });
   }
 
+  res.end();
+}
+
+export async function update(req: any, res: any): Promise<void> {
+  const { vote } = req.body ?? {};
+  const message = Types.ObjectId.createFromHexString(req.params.id);
+  
+  const voteEntry = await voteModel
+    .findOneAndUpdate(
+      {
+        'message': message,
+        'ip': req.ip
+      },
+      {
+        vote: vote
+      });
+
+  res.json({ message: "Message vote was updated" });
   res.end();
 }

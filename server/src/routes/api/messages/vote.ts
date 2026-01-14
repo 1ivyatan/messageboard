@@ -4,6 +4,8 @@ import * as voteController from "../../../controllers/voteController";
 const vote = express.Router({ mergeParams: true });
 
 vote.post("/", voteController.create);
-vote.get("/", voteController.get);
+vote.get("/", voteController.show);
+vote.patch("/", voteController.update);
+
 
 export default vote;

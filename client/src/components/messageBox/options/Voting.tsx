@@ -23,7 +23,7 @@ export default function Voting(props: any) {
       method: method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        vote: vote
+        vote: newVote
       }),
     })
     .then(async (response) => {
