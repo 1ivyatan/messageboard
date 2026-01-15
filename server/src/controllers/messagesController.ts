@@ -3,7 +3,7 @@ import { PipelineStage, Types } from "mongoose";
 import { messageModel } from "../models/message";
 
 export async function index(req: any, res: any): Promise<void> {
-  const { lastId } = req.query;
+  const { firstId, lastId } = req.query;
   
   const aggregation: PipelineStage[] = [{
     $lookup: {
@@ -110,7 +110,18 @@ export async function index(req: any, res: any): Promise<void> {
         }
       }
     };
+    aggregation.unshift(matchStage);
+  }
 
+  if (firstId) {
+    const firstMessage = Types.ObjectId.createFromHexString(firstId);
+    const matchStage: PipelineStage = {
+      $match: {
+        _id: {
+          $gt: firstMessage
+        }
+      }
+    };
     aggregation.unshift(matchStage);
   }
 

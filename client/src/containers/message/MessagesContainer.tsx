@@ -1,29 +1,34 @@
 import React, { useState, useEffect, useRef } from "react";
 import MessageBox from "../../components/message/messageBox/MessageBox";
+import { Message } from "../../types/Message";
 
 export default function MessagesContainer() {
-  const [data, setData] = useState([]);
+  enum Pagination {
+    Prev = "firstId",
+    Next = "lastId"
+  }
 
-  const [nextMessage, setNextMessage] = useState("");
+  const [data, setData] = useState<Message[]>([]);
 
-  const getData = (messageId: String) => {
+  const [nextMessage, setNextMessage] = useState<String>("");
+  const [prevMessage, setPrevMessage] = useState<String>("");
 
-    fetch(`${import.meta.env.VITE_API_BASE || "/api"}/messages${messageId !== "" ? "?lastId=" + messageId : ""}`, {
+  const getData = (messageId: String, direction: Pagination) => {
+
+    fetch(`${import.meta.env.VITE_API_BASE || "/api"}/messages${messageId !== "" ? "?" + direction + "=" + messageId : ""}`, {
       method: "GET"
     })
     .then(async (response) => {
-      const data = await response.json();
-      
-      console.log(data)
-      
-      console.log(messageId)
-      setData(data);
-      setNextMessage(data.at(-1)._id);
+      const items = await response.json();
+
+      setData(items);
+      setPrevMessage(items.at(0)._id);
+      setNextMessage(items.at(-1)._id);
     });
   };
 
   useEffect(() => {
-    getData("");
+    getData("", Pagination.Next);
   }, []);
 
   return <div className="border">
@@ -43,7 +48,8 @@ export default function MessagesContainer() {
     }
 
     <div>
-      <button type="button" onClick={() => getData(nextMessage)}>Next</button>
+      <button type="button" onClick={() => getData(prevMessage, Pagination.Prev)}>Previous</button>
+      <button type="button" onClick={() => getData(nextMessage, Pagination.Next)}>Next</button>
     </div>
   </div>;
 }
