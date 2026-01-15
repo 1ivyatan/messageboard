@@ -1,6 +1,5 @@
 import { Types } from "mongoose";
 import { voteModel } from "../models/vote";
-import { updateCount } from "./voteCountController";
 
 export async function show(req: any, res: any): Promise<void> {
   const message = Types.ObjectId.createFromHexString(req.params.id);
@@ -39,8 +38,6 @@ export async function create(req: any, res: any): Promise<void> {
     res.json({ error: "Message was not voted" });
   }
 
-  await updateCount(message);
-
   res.end();
 }
 
@@ -57,8 +54,6 @@ export async function update(req: any, res: any): Promise<void> {
       {
         vote: vote
       });
-  
-  await updateCount(message);
 
   res.json({ message: "Message vote was updated" });
   res.end();
@@ -74,9 +69,6 @@ export async function destroy(req: any, res: any): Promise<void> {
         'message': message,
         'ip': req.ip,
       });
-
-    await updateCount(message);
-
     res.json({ message: "Message vote was deleted" });
   } catch (e: any) {
     res.json({ message: "Message vote was not deleted" });
