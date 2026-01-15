@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import MessageBox from "../../components/messageBox/MessageBox";
+import MessagePagination from "../../components/messagePagination/MessagePagination";
 
 export default function MessagesContainer() {
   const [data, setData] = useState([]);
@@ -30,5 +31,6 @@ export default function MessagesContainer() {
         )
       })
     }
+    <MessagePagination data={data}/>
   </div>;
 }
