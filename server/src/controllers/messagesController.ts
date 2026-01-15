@@ -2,13 +2,17 @@ import express from "express";
 import { messageModel } from "../models/message";
 
 export async function index(req: any, res: any): Promise<void> {
-  const aggregate = await messageModel.aggregate([{
-    $lookup: { 
+  const aggregate = await messageModel.aggregate([
+  {
+    $lookup: {
       from: "votes",
       localField: "_id",
       foreignField: "message",
       as: "votes", 
-      pipeline: [ 
+      let: {
+        userIp: req.ip
+      },
+      pipeline: [
         {
           $group: {
             _id: "$message",
@@ -25,30 +29,53 @@ export async function index(req: any, res: any): Promise<void> {
             down: {
               $sum: {
                 $cond: [{ $eq: ["$vote", "down"] }, 1, 0]
-              }	
+              }
+            },
+            votes: { 
+              $push: { ip: "$ip", vote: "$vote" } 
             }
           }
         },
         {
-          $unset: "_id"
+          $project: {
+            _id: 0,
+            count: 1,
+            up: 1,
+            down: 1,
+            clientVote: {
+              $let: {
+                vars: {
+                  found: {
+                    $arrayElemAt: [
+                      {
+                        $filter: {
+                          input: "$votes",
+                          cond: { $eq: ["$$this.ip", "$$userIp"] }
+                        }
+                      },
+                      0
+                    ]
+                  }
+                },
+                in: "$$found.vote"
+              }
+            }
+          }
         }
-      ] 
-    } 
-  }]); 
-
-  const messages = await messageModel
-    .find()
-    .select({
-      _id: 1,
-      title: 1,
-      body: 1,
-      timestamp: 1,
-      votes: 1
-    })
-    .sort({
+      ],
+    }
+  },
+  {
+    $project: {
+      ip: 0
+    }
+  },
+  {
+    $sort: {
       timestamp: -1
-    })
-    .exec();
+    }
+  }
+  ]);
 
   res.json(aggregate);
 
