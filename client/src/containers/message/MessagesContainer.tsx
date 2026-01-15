@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import MessageBox from "../../components/messageBox/MessageBox";
-import MessagePagination from "../../components/messagePagination/MessagePagination";
+import MessageBox from "../../components/message/messageBox/MessageBox";
+import MessagePagination from "../../components/message/messagePagination/MessagePagination";
 
 export default function MessagesContainer() {
   const [data, setData] = useState([]);

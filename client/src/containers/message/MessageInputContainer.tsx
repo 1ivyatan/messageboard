@@ -1,4 +1,4 @@
-import MessageForm from "../../components/messageForm/MessageForm";
+import MessageForm from "../../components/message/messageForm/MessageForm";
 
 export default function MessageInputContainer() {
   return (
