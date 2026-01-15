@@ -94,6 +94,9 @@ export async function index(req: any, res: any): Promise<void> {
     $sort: {
       timestamp: -1
     }
+  },
+  {
+    $limit: 10
   }
   ]);
 
