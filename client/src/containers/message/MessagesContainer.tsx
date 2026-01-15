@@ -25,7 +25,7 @@ export default function MessagesContainer() {
             title={item.title}
             body={item.body}
             timestamp={item.timestamp}
-            votes={item.votes[0]}
+            votes={item.votes}
           />
         )
       })

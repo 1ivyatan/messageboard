@@ -15,9 +15,9 @@ export default function Voting(props: any) {
 
     const method = (vote === Vote.None) 
       ? "POST" 
-      : (newVote === vote)
-        ? "DELETE"
-        : "PATCH";
+      : (newVote !== vote)
+        ? "PATCH"
+        : "DELETE";
 
     fetch(url, {
       method: method,
@@ -47,7 +47,11 @@ export default function Voting(props: any) {
   }, []);
 
   useEffect(() => {
-    const clientVote: Vote = props.votes.clientVote || Vote.None; 
+
+    const clientVote: Vote = 
+      (props.votes.clientVote) 
+        ? props.votes.clientVote
+        : Vote.None; 
     
     const neutralCount = props.votes.count + (
       (clientVote === Vote.None)
