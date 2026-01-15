@@ -12,10 +12,6 @@ const messageSchema = new mongoose.Schema({
   },
   timestamp: {
     type: Date
-  },
-  votes: {
-    type: Number,
-    default: 0
   }
 });
 

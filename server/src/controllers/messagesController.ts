@@ -2,6 +2,40 @@ import express from "express";
 import { messageModel } from "../models/message";
 
 export async function index(req: any, res: any): Promise<void> {
+  const aggregate = await messageModel.aggregate([{
+    $lookup: { 
+      from: "votes",
+      localField: "_id",
+      foreignField: "message",
+      as: "votes", 
+      pipeline: [ 
+        {
+          $group: {
+            _id: "$message",
+            count: {
+              $sum: {
+                $cond: [{ $eq: ["$vote", "up"] }, 1, -1]
+              }
+            },
+            up: {
+              $sum: {
+                $cond: [{ $eq: ["$vote", "up"] }, 1, 0]
+              }
+            },
+            down: {
+              $sum: {
+                $cond: [{ $eq: ["$vote", "down"] }, 1, 0]
+              }	
+            }
+          }
+        },
+        {
+          $unset: "_id"
+        }
+      ] 
+    } 
+  }]); 
+
   const messages = await messageModel
     .find()
     .select({
@@ -16,7 +50,7 @@ export async function index(req: any, res: any): Promise<void> {
     })
     .exec();
 
-  res.json(messages);
+  res.json(aggregate);
 
   res.end();
 }
