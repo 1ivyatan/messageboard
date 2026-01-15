@@ -15,4 +15,10 @@ const messageSchema = new mongoose.Schema({
   }
 });
 
+messageSchema.index(
+  {
+    timestamp: -1
+  }
+);
+
 export const messageModel = mongoose.model("Message", messageSchema);
