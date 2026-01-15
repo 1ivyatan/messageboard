@@ -66,8 +66,28 @@ export async function index(req: any, res: any): Promise<void> {
     }
   },
   {
+    $addFields: {
+      votes: {
+        $ifNull: [
+          {
+            $arrayElemAt: [ "$votes", 0 ]
+          },
+          {
+            count: 0,
+            up: 0,
+            down: 0
+          }
+        ]
+      }
+    }
+  },
+  {
     $project: {
-      ip: 0
+      _id: 1,
+      title: 1,
+      body: 1,
+      timestamp: 1,
+      votes: 1
     }
   },
   {
