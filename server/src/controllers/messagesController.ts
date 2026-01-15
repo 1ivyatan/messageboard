@@ -1,9 +1,11 @@
 import express from "express";
+import { PipelineStage, Types } from "mongoose";
 import { messageModel } from "../models/message";
 
 export async function index(req: any, res: any): Promise<void> {
-  const aggregate = await messageModel.aggregate([
-  {
+  const { lastId } = req.query;
+  
+  const aggregation: PipelineStage[] = [{
     $lookup: {
       from: "votes",
       localField: "_id",
@@ -97,8 +99,22 @@ export async function index(req: any, res: any): Promise<void> {
   },
   {
     $limit: 10
+  }];
+
+  if (lastId) {
+    const lastMessage = Types.ObjectId.createFromHexString(lastId);
+    const matchStage: PipelineStage = {
+      $match: {
+        _id: {
+          $lt: lastMessage
+        }
+      }
+    };
+
+    aggregation.unshift(matchStage);
   }
-  ]);
+
+  const aggregate = await messageModel.aggregate(aggregation);
 
   res.json(aggregate);
 
