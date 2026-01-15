@@ -1,20 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import MessageBox from "../../components/message/messageBox/MessageBox";
-import MessagePagination from "../../components/message/messagePagination/MessagePagination";
 
 export default function MessagesContainer() {
   const [data, setData] = useState([]);
 
-  useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE || "/api"}/messages`, {
+  const [nextMessage, setNextMessage] = useState("");
+
+  const getData = (messageId: String) => {
+
+    fetch(`${import.meta.env.VITE_API_BASE || "/api"}/messages${messageId !== "" ? "?lastId=" + messageId : ""}`, {
       method: "GET"
     })
     .then(async (response) => {
       const data = await response.json();
+      
+      console.log(data)
+      
+      console.log(messageId)
       setData(data);
+      setNextMessage(data.at(-1)._id);
     });
-  }, []);
+  };
 
+  useEffect(() => {
+    getData("");
+  }, []);
 
   return <div className="border">
     {
@@ -31,6 +41,9 @@ export default function MessagesContainer() {
         )
       })
     }
-    <MessagePagination data={data}/>
+
+    <div>
+      <button type="button" onClick={() => getData(nextMessage)}>Next</button>
+    </div>
   </div>;
 }
