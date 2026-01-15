@@ -14,6 +14,7 @@ export default function MessagesContainer() {
     });
   }, []);
 
+
   return <div className="border">
     {
       data.map((item: any) => {
@@ -24,7 +25,7 @@ export default function MessagesContainer() {
             title={item.title}
             body={item.body}
             timestamp={item.timestamp}
-            votes={item.votes}
+            votes={item.votes[0]}
           />
         )
       })

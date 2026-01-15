@@ -7,9 +7,8 @@ export default function Voting(props: any) {
     Down = "down"
   }
 
-  const [ vote, setVote ] = useState(Vote.None);
-  const [ neutralVoteCount, setNeutralVoteCount ] = useState(0);
-  const [ displayedVoteCount, setDisplayedVoteCount ] = useState(0);
+  const [ vote, setVote ] = useState<Vote>(Vote.None);
+  const [ voteCount, setVoteCount ] = useState(0);
 
   const handleVote = (e: any, newVote: Vote) => {
     const url = `${import.meta.env.VITE_API_BASE || "/api"}/messages/${props.id}/vote`;
@@ -38,46 +37,35 @@ export default function Voting(props: any) {
     });
   };
 
-  const getVote = () => {
-    const url = `${import.meta.env.VITE_API_BASE || "/api"}/messages/${props.id}/vote`;
-
-    fetch(url)
-    .then(async (response) => {
-        const data = await response.json();
-
-        if (data != null) {
-          setVote(data.vote);
-
-          switch (data.vote) {
-            case Vote.None:
-              setNeutralVoteCount(props.votes);
-              break;
-            case Vote.Up:
-              setNeutralVoteCount(props.votes - 1);
-              break;
-            case Vote.Down:
-              setNeutralVoteCount(props.votes + 1);
-              break;
-          }
-        }
-    });
-  };
-
   useEffect(() => {
-    getVote();
-    setDisplayedVoteCount(props.votes);
+    if (props.votes.clientVote != null) {
+      setVote(props.votes.clientVote);
+    } else {
+      setVote(Vote.None);
+    }
+    
   }, []);
 
   useEffect(() => {
+    const clientVote: Vote = props.votes.clientVote || Vote.None; 
+    
+    const neutralCount = props.votes.count + (
+      (clientVote === Vote.None)
+        ? 0
+        : ( clientVote === Vote.Up )
+          ? -1
+          : 1
+    );
+    
     switch (vote) {
       case Vote.None:
-        setDisplayedVoteCount(neutralVoteCount);
+        setVoteCount(neutralCount);
         break;
       case Vote.Up:
-        setDisplayedVoteCount(neutralVoteCount + 1);
+        setVoteCount(neutralCount + 1);
         break;
       case Vote.Down:
-        setDisplayedVoteCount(neutralVoteCount - 1);
+        setVoteCount(neutralCount - 1);
         break;
       }
   }, [vote]);
@@ -85,7 +73,7 @@ export default function Voting(props: any) {
   return (
     <div>
       <button type="button" className={ `${Vote.Up}` } onClick={(e: any) => handleVote(e, Vote.Up)}> Up </button>
-        <span> { displayedVoteCount } </span>
+        <span> { voteCount } </span>
       <button type="button" className={ `${Vote.Down}` } onClick={(e: any) => handleVote(e, Vote.Down)}> Down </button>
     </div>
   );
