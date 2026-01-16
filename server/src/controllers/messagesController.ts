@@ -211,7 +211,7 @@ export async function index(req: any, res: any): Promise<void> {
     }
   ]);
 
-  res.json(aggregate);
+  res.json(aggregate[0]);
 
   res.end();
 }
