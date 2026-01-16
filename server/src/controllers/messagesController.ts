@@ -103,35 +103,81 @@ export async function index(req: any, res: any): Promise<void> {
     $limit: itemCount + 1
   }];
 
-  if (lastId) {
-    const lastMessage = Types.ObjectId.createFromHexString(lastId);
-    const matchStage: PipelineStage = {
-      $match: {
-        _id: {
-          $lt: lastMessage
-        }
-      }
-    };
-    aggregation.unshift(matchStage);
-  }
+  let prevMessage: any[] = [];
+  
+  if (!lastId !== !firstId) {
+    const message = Types.ObjectId.createFromHexString(lastId || firstId);
 
-  if (firstId) {
-    const firstMessage = Types.ObjectId.createFromHexString(firstId);
-    const matchStage: PipelineStage = {
-      $match: {
-        _id: {
-          $gt: firstMessage
+    if (lastId) {
+      const matchStage: PipelineStage = {
+        $match: {
+          _id: {
+            $lt: message
+          }
         }
-      }
-    };
-    aggregation.unshift(matchStage);
+      };
+
+      prevMessage = [
+        {
+          $match: {
+            _id: {
+              $gte: message
+            }
+          }
+        },
+        {
+          $sort: {
+            timestamp: -1
+          }
+        },
+        {
+          $limit: itemCount
+        }
+      ];
+
+      aggregation.unshift(matchStage);
+    } else if (firstId) {
+      const matchStage: PipelineStage = {
+        $match: {
+          _id: {
+            $lte: message
+          }
+        }
+      };
+
+      prevMessage = [
+        {
+          $match: {
+            _id: {
+              $gt: message
+            }
+          }
+        },
+        {
+          $sort: {
+            timestamp: -1
+          }
+        },
+        {
+          $limit: 1
+        }
+      ];
+
+      aggregation.unshift(matchStage);
+    }
   }
 
   const aggregate = await messageModel.aggregate([
     {
-      $facet: {
-        data: aggregation
-      }
+      $facet: 
+        (lastId || firstId)
+          ? {
+            data: aggregation,
+            prevCheck: prevMessage
+          }
+          : {
+            data: aggregation
+          }
     },
     {
       $addFields: {
@@ -141,6 +187,16 @@ export async function index(req: any, res: any): Promise<void> {
             $cond: [
               { $gt: [{ $size: "$data" }, itemCount] },
               { $arrayElemAt: ["$data._id", (itemCount - 1)] },
+              null
+            ]
+          },
+          prev: {
+            $cond: [
+              { $and: [
+                { $ne: [ { $type: "$prevCheck" }, "missing" ]   }, 
+                { $gt: [ {$size: "$prevCheck"}, 0 ] }
+              ] },
+              { $arrayElemAt: ["$prevCheck._id", 0] },
               null
             ]
           }
