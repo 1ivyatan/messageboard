@@ -96,7 +96,7 @@ export async function index(req: any, res: any): Promise<void> {
   },
   {
     $sort: {
-      timestamp: -1
+      _id: -1
     }
   },
   {
@@ -127,7 +127,7 @@ export async function index(req: any, res: any): Promise<void> {
         },
         {
           $sort: {
-            timestamp: -1
+            _id: 1
           }
         },
         {
@@ -155,11 +155,11 @@ export async function index(req: any, res: any): Promise<void> {
         },
         {
           $sort: {
-            timestamp: -1
+            _id: 1
           }
         },
         {
-          $limit: 1
+          $limit: itemCount + 1
         }
       ];
 
@@ -196,7 +196,9 @@ export async function index(req: any, res: any): Promise<void> {
                 { $ne: [ { $type: "$prevCheck" }, "missing" ]   }, 
                 { $gt: [ {$size: "$prevCheck"}, 0 ] }
               ] },
-              { $arrayElemAt: ["$prevCheck._id", 0] },
+              (lastId)
+                ? { $arrayElemAt: ["$prevCheck._id", (itemCount - 1)] }
+                : { $arrayElemAt: ["$prevCheck._id", (itemCount - 1)] },
               null
             ]
           }
