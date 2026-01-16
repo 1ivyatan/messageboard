@@ -2,10 +2,12 @@ import express from "express";
 import { PipelineStage, Types } from "mongoose";
 import { messageModel } from "../models/message";
 
+const itemCount: number = 10;
+
 export async function index(req: any, res: any): Promise<void> {
   const { firstId, lastId } = req.query;
   
-  const aggregation: PipelineStage[] = [{
+  const aggregation: any[] = [{
     $lookup: {
       from: "votes",
       localField: "_id",
@@ -98,7 +100,7 @@ export async function index(req: any, res: any): Promise<void> {
     }
   },
   {
-    $limit: 10
+    $limit: itemCount + 1
   }];
 
   if (lastId) {
@@ -125,7 +127,33 @@ export async function index(req: any, res: any): Promise<void> {
     aggregation.unshift(matchStage);
   }
 
-  const aggregate = await messageModel.aggregate(aggregation);
+  const aggregate = await messageModel.aggregate([
+    {
+      $facet: {
+        data: aggregation
+      }
+    },
+    {
+      $addFields: {
+        data: { $slice: ["$data", 10] },
+        meta: {
+          next: {
+            $cond: [
+              { $gt: [{ $size: "$data" }, itemCount] },
+              { $arrayElemAt: ["$data._id", (itemCount - 1)] },
+              null
+            ]
+          }
+        }
+      }
+    },
+    {
+      $project: {
+        meta: 1,
+        data: 1
+      }
+    }
+  ]);
 
   res.json(aggregate);
 
