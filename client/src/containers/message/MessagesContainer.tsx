@@ -11,7 +11,7 @@ export default function MessagesContainer(props: {messages: Message[]}) {
   }, []);
 
   return (
-    <div className="border">
+    <div>
       <div>
         {
           props.messages.map((message: Message) => {
