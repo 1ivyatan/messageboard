@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-export default function MessageForm () {
+export default function MessageForm (props: { onSubmit: Function, onError: Function }) {
   const [ title, setTitle ] = useState("");
   const [ message, setMessage ] = useState("");
+  const [ cooldown, setCooldown ] = useState(0);
 
   const handleTitleChange = (e: any) => {
     setTitle(e.target.value);
@@ -29,16 +30,32 @@ export default function MessageForm () {
       console.log(response)
 
       if (req.ok) {
-        console.log("ok")
+        setCooldown(10);
+        props.onSubmit("");
       } else {
-        if (req.status === 429) {
-          console.log("too fast, wait " + req.headers.get("Retry-After"))
-        }
+        const errorMessage = req.status === 429 ? `Too fast, try again in ${req.headers.get("Retry-After")} seconds.` : "Something went wrong!";
+        props.onSubmit(errorMessage);
       }
     } catch (e: any) {
       console.log(e)
     }
   };
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setCooldown((prev) => {
+        if (prev > 0) {
+          return prev - 1;
+        } else {
+          return 0;
+        }
+      });
+    }, 1000);
+
+    return () => {
+      clearInterval(timeout);
+    };
+  }, [cooldown]);
   
   return (
     <div className="border">
@@ -47,7 +64,10 @@ export default function MessageForm () {
         <br />
         <textarea className="border" name="message" onChange={handleMessageChange}></textarea>
         <br />
-        <button className="border" type="submit">Submit</button>
+        <button disabled={cooldown !== 0} className="border" type="submit">Submit</button>
+        {
+          (cooldown > 0) && <span>{ cooldown }</span>
+        }
       </form>
     </div>
   );

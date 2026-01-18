@@ -47,7 +47,6 @@ export default function Voting(props: any) {
   }, []);
 
   useEffect(() => {
-
     const clientVote: Vote = 
       (props.votes.clientVote) 
         ? props.votes.clientVote

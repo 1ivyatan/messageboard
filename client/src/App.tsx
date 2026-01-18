@@ -1,51 +1,159 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MessagesContainer from "./containers/message/MessagesContainer";
 import MessageInputContainer from "./containers/message/MessageInputContainer";
+import Pagination from "./types/Pagination";
+import Timer from "./components/Timer";
+import { Message } from "./types/Message";
+import InfoBox from "./components/InfoBox";
+import Loading from "./types/Loading";
 
-//type Health = { ok: boolean; timestamp: string };
+type Data = {
+  data: Message[],
+  meta: {
+    next: String | null,
+    prev: String | null
+  }
+}
+
+type MessageCursor = {
+  id: String,
+  origin: Pagination
+}
 
 export default function App() {
-  //const [health, setHealth] = useState<Health | null>(null);
-  //const [echo, setEcho] = useState("");
+  const [data, setData] = useState<Data>({data: [], meta: { next: null, prev: null }});
+  const [status, setStatus] = useState<Loading>(Loading.Loading);
 
-  //useEffect(() => {
-  //  fetch(`${import.meta.env.VITE_API_BASE || "/api"}/health`)
-  //    .then((r) => r.json())
-  //    .then(setHealth)
-  //    .catch(console.error);
-  //}, []);
+//  const [messageCursor, setMessageCursor] = useState<String>("");
 
-  /*
-  const onEcho = async () => {
-    const res = await fetch(`${import.meta.env.VITE_API_BASE || "/api"}/echo`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: "Hello from React!" }),
+  const [messageCursor, setMessageCursor] = useState<MessageCursor>({id: "", origin: Pagination.None});
+
+
+  const getDataById = (id: String, direction: Pagination) => {
+    let url = `${import.meta.env.VITE_API_BASE || "/api"}/messages`;
+
+    switch (direction) {
+      case Pagination.Next: 
+        url += `?${Pagination.Next}=${id}`;
+        setMessageCursor({id: id, origin: Pagination.None});
+        break;
+      case Pagination.Prev: 
+        url += `?${Pagination.Prev}=${id}`;
+        break;
+    }
+
+    setMessageCursor({id: id, origin: direction});
+
+    loadData(url);
+  }
+
+  const getData = (direction: Pagination) => {
+    let url = `${import.meta.env.VITE_API_BASE || "/api"}/messages`;
+
+    switch (direction) {
+      case Pagination.None:
+        setMessageCursor({id: "", origin: direction});
+        break;
+      case Pagination.Next: 
+        url += `?${direction}=${data.meta.next}`;
+        setMessageCursor({id: `${data.meta.next}`, origin: direction});
+        break;
+      case Pagination.Prev: 
+        url += `?${direction}=${data.meta.prev}`;
+        setMessageCursor({id: `${data.meta.prev}`, origin: direction});
+        break;
+    }
+
+    loadData(url);
+  }
+ 
+  const loadData = (url: any) => {
+    setStatus(Loading.Loading);
+
+    fetch(url)
+    .then(async (response) => {
+      const newData = await response.json();
+
+      if (response.ok) {
+        if (newData.data.length > 0) {
+          setStatus(Loading.Done);
+        } else {
+          setStatus(Loading.Empty);
+        }
+      } else {
+        setStatus(Loading.Error);
+      }
+      setData(newData);
+    }).catch((error) => {
+      setStatus(Loading.Error);
     });
-    const data = await res.json();
-    setEcho(data.message);
-  };*/
+  }
+
+  const MessagesBody = () => {
+    let body = <></>;
+    switch (status) {
+      case Loading.Empty:
+        body = (
+          <InfoBox text="No messages yet" />
+        );
+        break;
+      case Loading.Loading:
+        body = (
+          <InfoBox text="Loading messages" />
+        );
+        break;
+      case Loading.Done:
+        body = (
+          <>
+            <MessagesContainer messages={data.data}/>
+            <div>
+              <button disabled={data.meta.prev === "" || data.meta.prev === null} type="button" onClick={(e: any) => getData(Pagination.Prev)}>Prev</button>
+              <button disabled={data.meta.next === "" || data.meta.next === null} type="button" onClick={(e: any) => getData(Pagination.Next)}>Next</button>
+            </div>
+          </>
+        );
+        break;
+      case Loading.Error:
+      default:
+        body = (
+          <InfoBox text="Something went wrong... Contact the webmaster." />
+        );
+        break;
+    }
+
+    return body;
+  };
+
+  const remainingSeconds = useRef(0);
+  const delayTime = 30;
+
+  const onSubmitDone = (message: String) => {
+    remainingSeconds.current = delayTime;
+    getData(Pagination.None);
+  };
+
+  const onSubmitError = (message: String) => {
+    alert(message);
+  };
+
+  const onTimeout = () => {
+    if (messageCursor.id.length > 0) {
+      getDataById(messageCursor.id, messageCursor.origin);
+    } else {
+      getData(Pagination.None);
+    }
+    return status;
+  }
+
+  const timer = <Timer cooldown={delayTime} ontimeout={onTimeout} elapsed={remainingSeconds}/>;
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", padding: 24 }}>
-      <MessageInputContainer />
-      <MessagesContainer />
+      <MessageInputContainer onSubmit={onSubmitDone} onError={onSubmitError}/>
+      { status !== Loading.Error && timer }
+      <div>
+        <MessagesBody/>
+      </div>
     </div>
   );
-  /*
-  
-      
-
-      <h1>React + Express + TypeScript</h1>
-      <p>Health: {health ? <code>{JSON.stringify(health)}</code> : "Loading..."}</p>
-      <button onClick={onEcho}>Send Echo</button>
-      {echo && (
-        <p>
-          Echo response: <code>{echo}</code>
-        </p>
-      )}
-      <p style={{ marginTop: 24 }}>
-        Try editing <code>client/src/App.tsx</code>.
-      </p>
-  */
 }
