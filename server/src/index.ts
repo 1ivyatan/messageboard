@@ -3,11 +3,9 @@ import cors from "cors";
 import path from "node:path";
 import dotenv from "dotenv";
 import routes from "./routes";
-import * as database from "./database";
+import mongoose from "mongoose";
 
-dotenv.config({ debug: true, path: '../.env' });
-
-database.connect();
+dotenv.config({ debug: true, path: "../.env" });
 
 const app = express();
 const PORT = Number(process.env.SERVER_PORT);
@@ -27,7 +25,16 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Server listening on http://localhost:${PORT}`);
-});
+mongoose
+  .connect(
+    `mongodb://${process.env.DB_URL}:${process.env.DB_PORT}/${process.env.DB_NAME}`,
+  )
+  .then(() => {
+    app.listen(PORT, () => {
+      // eslint-disable-next-line no-console
+      console.log(`Server listening on http://localhost:${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error(`Error connecting to MongoDB: ${error}`);
+  });
