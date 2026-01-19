@@ -1,24 +1,22 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema({
   ip: {
-    type: String
+    type: String,
+    required: true,
   },
   title: {
-    type: String
+    type: String,
+    required: true,
   },
   body: {
-    type: String
+    type: String,
+    required: true,
   },
   timestamp: {
-    type: Date
-  }
+    type: Date,
+    required: true,
+  },
 });
-
-messageSchema.index(
-  {
-  _id: -1
-  }
-);
 
 export const messageModel = mongoose.model("Message", messageSchema);
