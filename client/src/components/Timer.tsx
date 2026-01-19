@@ -34,8 +34,8 @@ export default function Timer(props: {cooldown: any, ontimeout: Function, elapse
   }, [cooldown]);
 
     return (
-        <div>
+      <div className="mb-3 gap-4 max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
             { (visible && props.elapsed.current > 0) && `New messages in ${props.elapsed.current}` }
-        </div>
+      </div>
     );
 }

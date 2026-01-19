@@ -11,8 +11,7 @@ export default function MessagesContainer(props: {messages: Message[]}) {
   }, []);
 
   return (
-    <div>
-      <div>
+      <div className="flex flex-col gap-4">
         {
           props.messages.map((message: Message) => {
             return (
@@ -28,6 +27,5 @@ export default function MessagesContainer(props: {messages: Message[]}) {
           })
         }
       </div>
-    </div>
   );
 }

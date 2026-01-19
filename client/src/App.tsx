@@ -6,6 +6,8 @@ import Timer from "./components/Timer";
 import { Message } from "./types/Message";
 import InfoBox from "./components/InfoBox";
 import Loading from "./types/Loading";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 type Data = {
   data: Message[],
@@ -106,10 +108,36 @@ export default function App() {
         body = (
           <>
             <MessagesContainer messages={data.data}/>
-            <div>
-              <button disabled={data.meta.prev === "" || data.meta.prev === null} type="button" onClick={(e: any) => getData(Pagination.Prev)}>Prev</button>
-              <button disabled={data.meta.next === "" || data.meta.next === null} type="button" onClick={(e: any) => getData(Pagination.Next)}>Next</button>
-            </div>
+            <div className="mt-3 flex justify-center">
+              <button
+                className={
+                  (data.meta.prev === "" || data.meta.prev === null)
+                  ? "cursor-not-allowed py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-gray-400 rounded-full border border-gray-200  focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600"
+                  : "py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                } 
+                disabled={data.meta.prev === "" || data.meta.prev === null} 
+                type="button" 
+                onClick={(e: any) => getData(Pagination.Prev)}
+                >
+                  <FontAwesomeIcon icon={fas.faArrowLeft}  />
+              </button>
+
+
+              <button
+                className={
+                  (data.meta.next === "" || data.meta.next === null)
+                  ? "cursor-not-allowed py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-gray-400 rounded-full border border-gray-200  focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600"
+                  : "py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                } 
+                disabled={data.meta.next === "" || data.meta.next === null} 
+                type="button" 
+                onClick={(e: any) => getData(Pagination.Next)}
+                >
+                  <FontAwesomeIcon icon={fas.faArrowRight}  />
+              </button>
+
+
+              </div>
           </>
         );
         break;
@@ -148,7 +176,7 @@ export default function App() {
   const timer = <Timer cooldown={delayTime} ontimeout={onTimeout} elapsed={remainingSeconds}/>;
 
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", padding: 24 }}>
+    <div className="max-w-xl mx-auto px-2" style={{ fontFamily: "system-ui, sans-serif", padding: 24 }}>
       <MessageInputContainer onSubmit={onSubmitDone} onError={onSubmitError}/>
       { status !== Loading.Error && timer }
       <div>
