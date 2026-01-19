@@ -4,15 +4,17 @@ import useMessagesStore from "./stores/messagesStore";
 import MessagesContainer from "./containers/message/MessagesContainer";
 
 export default function App() {
-  const { messages, fetch } = useMessagesStore(
+  const { messages, fetchIndex, fetchNext } = useMessagesStore(
     useShallow((state) => ({
       messages: state.messages,
-      fetch: state.fetch,
+      fetchIndex: state.fetchIndex,
+      fetchNext: state.fetchNext,
     })),
   );
 
   useEffect(() => {
-    fetch();
+    fetchIndex();
+    fetchNext();
   }, []);
 
   return (

@@ -23,7 +23,10 @@ interface MessagesProps {
 }
 
 interface MessagesState extends MessagesProps {
-  fetch: () => void;
+  fetchIndex: () => void;
+  fetchByCursor: () => void;
+  fetchNext: () => void;
+  fetchData: (urlExtras: String) => void;
 }
 
 const messagesInitialState: MessagesState = {
@@ -31,17 +34,17 @@ const messagesInitialState: MessagesState = {
   meta: metaInitialState,
   status: Status.Loading,
   cursor: cursorInitialState,
-  fetch: () => {},
+  fetchIndex: () => {},
+  fetchByCursor: () => {},
+  fetchNext: () => {},
+  fetchData: (urlExtras: String) => {},
 };
 
-const useMessagesStore = create<MessagesState>()((set) => ({
+const useMessagesStore = create<MessagesState>()((set, get) => ({
   ...messagesInitialState,
-  fetch: async () => {
-    set(() => ({
-      status: Status.Loading,
-    }));
 
-    const url = `${import.meta.env.VITE_API_BASE || "/api"}/messages`;
+  fetchData: async (urlExtras: String) => {
+    const url = `${import.meta.env.VITE_API_BASE || "/api"}/messages${urlExtras}`;
     const response = await fetch(url);
 
     if (response.ok) {
@@ -59,7 +62,30 @@ const useMessagesStore = create<MessagesState>()((set) => ({
         messages: [],
         meta: metaInitialState,
         status: Status.Error,
+        cursor: cursorInitialState,
       }));
+    }
+  },
+
+  /* index */
+  fetchIndex: async () => {
+    set(() => ({
+      status: Status.Loading,
+    }));
+
+    get().fetchData("");
+  },
+
+  /* data */
+  fetchNext: async () => {
+    set(() => ({
+      status: Status.Loading,
+    }));
+
+    const cursorId = get().cursor.id;
+
+    if (cursorId) {
+      get().fetchData(`?${Pagination.Next}=${get().cursor.id}`);
     }
   },
 }));
