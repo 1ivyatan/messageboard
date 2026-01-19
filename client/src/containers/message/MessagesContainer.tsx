@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import MessageBox from "../../components/message/messageBox/MessageBox";
-import { Message } from "../../types/Message";
-import Pagination from "../../types/Pagination";
 
+import { Message } from "../../types/Message";
 import { useShallow } from "zustand/react/shallow";
 import useMessagesStore from "../../stores/messagesStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,8 +19,9 @@ export default function MessagesContainer() {
 
   return (
     <div className="flex flex-col gap-4">
-      {messages.map((message: Message) => {
-        return <p key={"message_" + message._id}>{message.title}</p>;
+      {messages.map((message: Message, index: number) => {
+        return <MessageBox key={`message_${message._id}`} no={index} />;
+        //return <p key={"message_" + message._id}>{message.title}</p>;
       })}
 
       <div>
