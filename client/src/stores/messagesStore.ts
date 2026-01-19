@@ -1,26 +1,33 @@
 import { create } from "zustand";
 import { Message } from "../types/Message";
+import { Meta } from "../types/Meta";
 
 interface MessagesState {
-  messages: number;
+  messages: Message[];
+  meta: Meta;
   fetch: () => void;
 }
 
 const useMessagesStore = create<MessagesState>()((set) => ({
-  messages: 0,
+  messages: [],
+  meta: {
+    next: null,
+    prev: null,
+  },
   fetch: async () => {
-    set((state) => ({
-      messages: state.messages + 1,
-    }));
-    // const url = `${import.meta.env.VITE_API_BASE || "/api"}/messages`;
-    // const response = await fetch(url);
+    const url = `${import.meta.env.VITE_API_BASE || "/api"}/messages`;
+    const response = await fetch(url);
 
-    //if (response.ok) {
-    // const data = response.json();
-    // console.log(data);
-    //} else {
-    //  console.log("err");
-    //}
+    if (response.ok) {
+      const data = await response.json();
+
+      set(() => ({
+        messages: data.data,
+        meta: data.meta,
+      }));
+    } else {
+      console.log("err");
+    }
   },
 }));
 

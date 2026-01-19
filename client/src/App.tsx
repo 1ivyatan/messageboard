@@ -14,9 +14,5 @@ export default function App() {
     fetch();
   }, []);
 
-  return (
-    <div>
-      <p>{messages}</p>
-    </div>
-  );
+  return <div></div>;
 }
