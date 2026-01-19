@@ -52,6 +52,8 @@ const useMessagesStore = create<MessagesState>()((set) => ({
         meta: data.meta,
         status: Status.Success,
       }));
+
+      console.log(data);
     } else {
       set(() => ({
         messages: [],

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
 import useMessagesStore from "./stores/messagesStore";
+import MessagesContainer from "./containers/message/MessagesContainer";
 
 export default function App() {
   const { messages, fetch } = useMessagesStore(
@@ -14,5 +15,9 @@ export default function App() {
     fetch();
   }, []);
 
-  return <div></div>;
+  return (
+    <div>
+      <MessagesContainer />
+    </div>
+  );
 }
