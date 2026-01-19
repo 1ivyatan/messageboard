@@ -30,6 +30,7 @@ interface MessagesState extends MessagesProps {
   fetchPrev: () => void;
   fetchData: (urlExtras: String) => void;
   sendVote: (id: String, oldVote: VoteType, newVote: VoteType) => any;
+  sendMessage: (title: String, body: String) => any;
 }
 
 const messagesInitialState: MessagesState = {
@@ -42,7 +43,8 @@ const messagesInitialState: MessagesState = {
   fetchNext: async () => {},
   fetchPrev: async () => {},
   fetchData: async (urlExtras: String) => {},
-  sendVote: (id: String, oldVote: VoteType, newVote: VoteType) => {},
+  sendVote: async (id: String, oldVote: VoteType, newVote: VoteType) => {},
+  sendMessage: async (title: String, body: String) => {},
 };
 
 const useMessagesStore = create<MessagesState>()((set, get) => ({
@@ -99,10 +101,6 @@ const useMessagesStore = create<MessagesState>()((set, get) => ({
     oldVote: VoteType,
     newVote: VoteType,
   ): Promise<boolean> => {
-    const message = get().messages.filter((message) => {
-      return message._id === id;
-    })[0];
-
     const method =
       oldVote === VoteType.None
         ? "POST"
@@ -121,6 +119,26 @@ const useMessagesStore = create<MessagesState>()((set, get) => ({
     });
 
     return response.ok;
+  },
+
+  sendMessage: async (title: String, body: String): Promise<boolean> => {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_BASE || "/api"}/messages`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: title,
+          body: body,
+        }),
+      },
+    );
+
+    if (response.ok) {
+      return true;
+    } else {
+      return false;
+    }
   },
 }));
 

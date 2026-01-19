@@ -21,7 +21,6 @@ export default function MessagesContainer() {
     <div className="flex flex-col gap-4">
       {messages.map((message: Message, index: number) => {
         return <MessageBox key={`message_${message._id}`} no={index} />;
-        //return <p key={"message_" + message._id}>{message.title}</p>;
       })}
 
       <div>
@@ -42,29 +41,4 @@ export default function MessagesContainer() {
       </div>
     </div>
   );
-  //const [messages, setMessages] = useState<Message[]>([]);
-
-  // useEffect(() => {
-  //  setMessages(props.messages);
-  //}, []);
-
-  /*
-  return (
-      <div className="flex flex-col gap-4">
-        {
-          props.messages.map((message: Message) => {
-            return (
-              <MessageBox
-                key={"message_" + message._id}
-                id={message._id}
-                title={message.title}
-                body={message.body}
-                timestamp={message.timestamp}
-                votes={message.votes}
-              />
-            );
-          })
-        }
-      </div>
-  );*/
 }
