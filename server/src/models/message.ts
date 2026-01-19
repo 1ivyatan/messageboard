@@ -17,7 +17,7 @@ const messageSchema = new mongoose.Schema({
 
 messageSchema.index(
   {
-    timestamp: -1
+  _id: -1
   }
 );
 
