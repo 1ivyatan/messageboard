@@ -4,6 +4,7 @@ import { Meta } from "../types/Meta";
 import { Status } from "../types/Status";
 import { Cursor } from "../types/Cursor";
 import Pagination from "../types/Pagination";
+import { VoteType } from "../types/VoteType";
 
 const metaInitialState: Meta = {
   next: null,
@@ -28,6 +29,7 @@ interface MessagesState extends MessagesProps {
   fetchNext: () => void;
   fetchPrev: () => void;
   fetchData: (urlExtras: String) => void;
+  sendVote: (id: String, oldVote: VoteType, newVote: VoteType) => any;
 }
 
 const messagesInitialState: MessagesState = {
@@ -35,11 +37,12 @@ const messagesInitialState: MessagesState = {
   meta: metaInitialState,
   status: Status.Loading,
   cursor: cursorInitialState,
-  fetchIndex: () => {},
-  fetchByCursor: () => {},
-  fetchNext: () => {},
-  fetchPrev: () => {},
-  fetchData: (urlExtras: String) => {},
+  fetchIndex: async () => {},
+  fetchByCursor: async () => {},
+  fetchNext: async () => {},
+  fetchPrev: async () => {},
+  fetchData: async (urlExtras: String) => {},
+  sendVote: (id: String, oldVote: VoteType, newVote: VoteType) => {},
 };
 
 const useMessagesStore = create<MessagesState>()((set, get) => ({
@@ -61,8 +64,6 @@ const useMessagesStore = create<MessagesState>()((set, get) => ({
         meta: data.meta,
         status: Status.Success,
       }));
-
-      console.log(data);
     } else {
       set(() => ({
         messages: [],
@@ -91,6 +92,35 @@ const useMessagesStore = create<MessagesState>()((set, get) => ({
     if (prev !== null && prev !== "") {
       get().fetchData(`?${Pagination.Prev}=${get().meta.prev}`);
     }
+  },
+
+  sendVote: async (
+    id: String,
+    oldVote: VoteType,
+    newVote: VoteType,
+  ): Promise<boolean> => {
+    const message = get().messages.filter((message) => {
+      return message._id === id;
+    })[0];
+
+    const method =
+      oldVote === VoteType.None
+        ? "POST"
+        : newVote !== oldVote
+          ? "PATCH"
+          : "DELETE";
+
+    const url = `${import.meta.env.VITE_API_BASE || "/api"}/messages/${id}/vote`;
+
+    const response = await fetch(url, {
+      method: method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        vote: newVote as string,
+      }),
+    });
+
+    return response.ok;
   },
 }));
 

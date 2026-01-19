@@ -1,6 +1,6 @@
 import { useShallow } from "zustand/react/shallow";
 import useMessagesStore from "../../../stores/messagesStore";
-import MessageOptions from "./MessageOptions";
+import Voting from "./Voting";
 
 export default function MessageBox(props: { no: number }) {
   const { messages } = useMessagesStore(
@@ -18,6 +18,9 @@ export default function MessageBox(props: { no: number }) {
         <span>{message.timestamp}</span>
       </div>
       <div>{message.body}</div>
+      <div>
+        <Voting no={props.no} />
+      </div>
     </div>
   );
   /*return (
