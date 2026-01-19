@@ -26,6 +26,7 @@ interface MessagesState extends MessagesProps {
   fetchIndex: () => void;
   fetchByCursor: () => void;
   fetchNext: () => void;
+  fetchPrev: () => void;
   fetchData: (urlExtras: String) => void;
 }
 
@@ -37,6 +38,7 @@ const messagesInitialState: MessagesState = {
   fetchIndex: () => {},
   fetchByCursor: () => {},
   fetchNext: () => {},
+  fetchPrev: () => {},
   fetchData: (urlExtras: String) => {},
 };
 
@@ -44,6 +46,10 @@ const useMessagesStore = create<MessagesState>()((set, get) => ({
   ...messagesInitialState,
 
   fetchData: async (urlExtras: String) => {
+    set(() => ({
+      status: Status.Loading,
+    }));
+
     const url = `${import.meta.env.VITE_API_BASE || "/api"}/messages${urlExtras}`;
     const response = await fetch(url);
 
@@ -67,25 +73,23 @@ const useMessagesStore = create<MessagesState>()((set, get) => ({
     }
   },
 
-  /* index */
   fetchIndex: async () => {
-    set(() => ({
-      status: Status.Loading,
-    }));
-
     get().fetchData("");
   },
 
-  /* data */
   fetchNext: async () => {
-    set(() => ({
-      status: Status.Loading,
-    }));
+    const next = get().meta.next;
 
-    const cursorId = get().cursor.id;
+    if (next !== null && next !== "") {
+      get().fetchData(`?${Pagination.Next}=${get().meta.next}`);
+    }
+  },
 
-    if (cursorId) {
-      get().fetchData(`?${Pagination.Next}=${get().cursor.id}`);
+  fetchPrev: async () => {
+    const prev = get().meta.prev;
+
+    if (prev !== null && prev !== "") {
+      get().fetchData(`?${Pagination.Prev}=${get().meta.prev}`);
     }
   },
 }));

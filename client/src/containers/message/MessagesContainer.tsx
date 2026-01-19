@@ -5,11 +5,16 @@ import Pagination from "../../types/Pagination";
 
 import { useShallow } from "zustand/react/shallow";
 import useMessagesStore from "../../stores/messagesStore";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { fas } from "@fortawesome/free-solid-svg-icons";
 
 export default function MessagesContainer() {
-  const { messages } = useMessagesStore(
+  const { messages, meta, fetchNext, fetchPrev } = useMessagesStore(
     useShallow((state) => ({
       messages: state.messages,
+      meta: state.meta,
+      fetchNext: state.fetchNext,
+      fetchPrev: state.fetchPrev,
     })),
   );
 
@@ -18,6 +23,23 @@ export default function MessagesContainer() {
       {messages.map((message: Message) => {
         return <p key={"message_" + message._id}>{message.title}</p>;
       })}
+
+      <div>
+        <button
+          type="button"
+          disabled={meta.prev === null || meta.prev === ""}
+          onClick={fetchPrev}
+        >
+          <FontAwesomeIcon icon={fas.faArrowLeft} />
+        </button>
+        <button
+          type="button"
+          disabled={meta.next === null || meta.next === ""}
+          onClick={fetchNext}
+        >
+          <FontAwesomeIcon icon={fas.faArrowRight} />
+        </button>
+      </div>
     </div>
   );
   //const [messages, setMessages] = useState<Message[]>([]);
