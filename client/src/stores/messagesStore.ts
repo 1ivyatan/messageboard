@@ -2,23 +2,40 @@ import { create } from "zustand";
 import { Message } from "../types/Message";
 import { Meta } from "../types/Meta";
 import { Status } from "../types/Status";
-
-interface MessagesState {
-  messages: Message[];
-  meta: Meta;
-  status: Status;
-  fetch: () => void;
-}
+import { Cursor } from "../types/Cursor";
+import Pagination from "../types/Pagination";
 
 const metaInitialState: Meta = {
   next: null,
   prev: null,
 };
 
-const useMessagesStore = create<MessagesState>()((set) => ({
+const cursorInitialState: Cursor = {
+  id: null,
+  origin: Pagination.Prev,
+};
+
+interface MessagesProps {
+  cursor: Cursor;
+  messages: Message[];
+  meta: Meta;
+  status: Status;
+}
+
+interface MessagesState extends MessagesProps {
+  fetch: () => void;
+}
+
+const messagesInitialState: MessagesState = {
   messages: [],
   meta: metaInitialState,
   status: Status.Loading,
+  cursor: cursorInitialState,
+  fetch: () => {},
+};
+
+const useMessagesStore = create<MessagesState>()((set) => ({
+  ...messagesInitialState,
   fetch: async () => {
     set(() => ({
       status: Status.Loading,
