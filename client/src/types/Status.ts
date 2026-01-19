@@ -1,4 +1,4 @@
-export enum MessagesStatus {
+export enum Status {
   Loading,
   Success,
   Error,
