@@ -21,6 +21,7 @@ interface MessagesProps {
   messages: Message[];
   meta: Meta;
   status: Status;
+  postDelay: number | null;
 }
 
 interface MessagesState extends MessagesProps {
@@ -29,8 +30,10 @@ interface MessagesState extends MessagesProps {
   fetchNext: () => void;
   fetchPrev: () => void;
   fetchData: (urlExtras: String) => void;
+  fetchPostDelay: () => void;
   sendVote: (id: String, oldVote: VoteType, newVote: VoteType) => any;
   sendMessage: (title: String, body: String) => any;
+  setPostDelay: (seconds: number) => void;
 }
 
 const messagesInitialState: MessagesState = {
@@ -38,13 +41,16 @@ const messagesInitialState: MessagesState = {
   meta: metaInitialState,
   status: Status.Loading,
   cursor: cursorInitialState,
+  postDelay: null,
   fetchIndex: async () => {},
   fetchByCursor: async () => {},
   fetchNext: async () => {},
   fetchPrev: async () => {},
   fetchData: async (urlExtras: String) => {},
+  fetchPostDelay: async () => {},
   sendVote: async (id: String, oldVote: VoteType, newVote: VoteType) => {},
   sendMessage: async (title: String, body: String) => {},
+  setPostDelay: (seconds: number) => {},
 };
 
 const useMessagesStore = create<MessagesState>()((set, get) => ({
@@ -96,6 +102,18 @@ const useMessagesStore = create<MessagesState>()((set, get) => ({
     }
   },
 
+  fetchPostDelay: async () => {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_BASE || "/api"}/messages/delay`,
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      get().setPostDelay(data.delay);
+    } else {
+    }
+  },
+
   sendVote: async (
     id: String,
     oldVote: VoteType,
@@ -122,6 +140,11 @@ const useMessagesStore = create<MessagesState>()((set, get) => ({
   },
 
   sendMessage: async (title: String, body: String): Promise<boolean> => {
+    const delay = get().postDelay;
+    if (delay == null || delay > 0) {
+      return false;
+    }
+
     const response = await fetch(
       `${import.meta.env.VITE_API_BASE || "/api"}/messages`,
       {
@@ -139,6 +162,12 @@ const useMessagesStore = create<MessagesState>()((set, get) => ({
     } else {
       return false;
     }
+  },
+
+  setPostDelay: (seconds: number) => {
+    set(() => ({
+      postDelay: seconds,
+    }));
   },
 }));
 

@@ -14,9 +14,18 @@ const postLimter = rateLimit({
   legacyHeaders: false,
   ipv6Subnet: 56, // Set to 60 or 64 to be less aggressive, or 52 or 48 to be more aggressive
   message: {
-    error: "Too many messages sent in this inverval."
-  }
-})
+    error: "Too many messages sent in this inverval.",
+  },
+});
+
+messages.get("/delay", (req, res) => {
+  res.status(200);
+  res.json({
+    delay: 6,
+  });
+  res.end();
+});
+
 messages.post("/", postLimter, messagesController.create);
 
 export default messages;

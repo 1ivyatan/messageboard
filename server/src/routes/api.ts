@@ -7,13 +7,13 @@ const api = express.Router();
 api.use("/messages", messages);
 api.use("/messages/:id/vote", vote);
 
-api.get("/health", (_req, res) => {
-  res.json({ ok: true, timestamp: new Date().toISOString(), h: _req.ip  });
-});
+//api.get("/health", (_req, res) => {
+//  res.json({ ok: true, timestamp: new Date().toISOString(), h: _req.ip  });
+//});
 
-api.post("/echo", (req, res) => {
-  const { message } = req.body ?? {};
-  res.json({ message: message ?? "Nothing received" });
-});
+//api.post("/echo", (req, res) => {
+//  const { message } = req.body ?? {};
+//  res.json({ message: message ?? "Nothing received" });
+//});
 
 export default api;
