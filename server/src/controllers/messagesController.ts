@@ -6,105 +6,107 @@ const itemCount: number = 10;
 
 export async function index(req: any, res: any): Promise<void> {
   const { firstId, lastId } = req.query;
-  
-  const aggregation: any[] = [{
-    $lookup: {
-      from: "votes",
-      localField: "_id",
-      foreignField: "message",
-      as: "votes", 
-      let: {
-        userIp: req.ip
-      },
-      pipeline: [
-        {
-          $group: {
-            _id: "$message",
-            count: {
-              $sum: {
-                $cond: [{ $eq: ["$vote", "up"] }, 1, -1]
-              }
-            },
-            up: {
-              $sum: {
-                $cond: [{ $eq: ["$vote", "up"] }, 1, 0]
-              }
-            },
-            down: {
-              $sum: {
-                $cond: [{ $eq: ["$vote", "down"] }, 1, 0]
-              }
-            },
-            votes: { 
-              $push: { ip: "$ip", vote: "$vote" } 
-            }
-          }
+
+  const aggregation: any[] = [
+    {
+      $lookup: {
+        from: "votes",
+        localField: "_id",
+        foreignField: "message",
+        as: "votes",
+        let: {
+          userIp: req.ip,
         },
-        {
-          $project: {
-            _id: 0,
-            count: 1,
-            up: 1,
-            down: 1,
-            clientVote: {
-              $let: {
-                vars: {
-                  found: {
-                    $arrayElemAt: [
-                      {
-                        $filter: {
-                          input: "$votes",
-                          cond: { $eq: ["$$this.ip", "$$userIp"] }
-                        }
-                      },
-                      0
-                    ]
-                  }
-                },
-                in: "$$found.vote"
-              }
-            }
-          }
-        }
-      ],
-    }
-  },
-  {
-    $addFields: {
-      votes: {
-        $ifNull: [
+        pipeline: [
           {
-            $arrayElemAt: [ "$votes", 0 ]
+            $group: {
+              _id: "$message",
+              count: {
+                $sum: {
+                  $cond: [{ $eq: ["$vote", "up"] }, 1, -1],
+                },
+              },
+              up: {
+                $sum: {
+                  $cond: [{ $eq: ["$vote", "up"] }, 1, 0],
+                },
+              },
+              down: {
+                $sum: {
+                  $cond: [{ $eq: ["$vote", "down"] }, 1, 0],
+                },
+              },
+              votes: {
+                $push: { ip: "$ip", vote: "$vote" },
+              },
+            },
           },
           {
-            count: 0,
-            up: 0,
-            down: 0
-          }
-        ]
-      }
-    }
-  },
-  {
-    $project: {
-      _id: 1,
-      title: 1,
-      body: 1,
-      timestamp: 1,
-      votes: 1
-    }
-  },
-  {
-    $sort: {
-      _id: -1
-    }
-  },
-  {
-    $limit: itemCount + 1
-  }];
+            $project: {
+              _id: 0,
+              count: 1,
+              up: 1,
+              down: 1,
+              clientVote: {
+                $let: {
+                  vars: {
+                    found: {
+                      $arrayElemAt: [
+                        {
+                          $filter: {
+                            input: "$votes",
+                            cond: { $eq: ["$$this.ip", "$$userIp"] },
+                          },
+                        },
+                        0,
+                      ],
+                    },
+                  },
+                  in: "$$found.vote",
+                },
+              },
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        votes: {
+          $ifNull: [
+            {
+              $arrayElemAt: ["$votes", 0],
+            },
+            {
+              count: 0,
+              up: 0,
+              down: 0,
+            },
+          ],
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        title: 1,
+        body: 1,
+        timestamp: 1,
+        votes: 1,
+      },
+    },
+    {
+      $sort: {
+        _id: -1,
+      },
+    },
+    {
+      $limit: itemCount + 1,
+    },
+  ];
 
   let prevMessage: any[] = [];
-  
+
   if (!lastId !== !firstId) {
     const message = Types.ObjectId.createFromHexString(lastId || firstId);
 
@@ -112,27 +114,27 @@ export async function index(req: any, res: any): Promise<void> {
       const matchStage: PipelineStage = {
         $match: {
           _id: {
-            $lt: message
-          }
-        }
+            $lt: message,
+          },
+        },
       };
 
       prevMessage = [
         {
           $match: {
             _id: {
-              $gte: message
-            }
-          }
+              $gte: message,
+            },
+          },
         },
         {
           $sort: {
-            _id: 1
-          }
+            _id: 1,
+          },
         },
         {
-          $limit: itemCount
-        }
+          $limit: itemCount,
+        },
       ];
 
       aggregation.unshift(matchStage);
@@ -140,27 +142,27 @@ export async function index(req: any, res: any): Promise<void> {
       const matchStage: PipelineStage = {
         $match: {
           _id: {
-            $lte: message
-          }
-        }
+            $lte: message,
+          },
+        },
       };
 
       prevMessage = [
         {
           $match: {
             _id: {
-              $gt: message
-            }
-          }
+              $gt: message,
+            },
+          },
         },
         {
           $sort: {
-            _id: 1
-          }
+            _id: 1,
+          },
         },
         {
-          $limit: itemCount + 1
-        }
+          $limit: itemCount + 1,
+        },
       ];
 
       aggregation.unshift(matchStage);
@@ -169,15 +171,15 @@ export async function index(req: any, res: any): Promise<void> {
 
   const aggregate = await messageModel.aggregate([
     {
-      $facet: 
-        (lastId || firstId)
+      $facet:
+        lastId || firstId
           ? {
-            data: aggregation,
-            prevCheck: prevMessage
-          }
+              data: aggregation,
+              prevCheck: prevMessage,
+            }
           : {
-            data: aggregation
-          }
+              data: aggregation,
+            },
     },
     {
       $addFields: {
@@ -186,31 +188,33 @@ export async function index(req: any, res: any): Promise<void> {
           next: {
             $cond: [
               { $gt: [{ $size: "$data" }, itemCount] },
-              { $arrayElemAt: ["$data._id", (itemCount - 1)] },
-              null
-            ]
+              { $arrayElemAt: ["$data._id", itemCount - 1] },
+              null,
+            ],
           },
           prev: {
             $cond: [
-              { $and: [
-                { $ne: [ { $type: "$prevCheck" }, "missing" ]   }, 
-                { $gt: [ {$size: "$prevCheck"}, 0 ] }
-              ] },
-              (lastId)
-                ? { $arrayElemAt: ["$prevCheck._id", (itemCount - 1)] }
-                : { $arrayElemAt: ["$prevCheck._id", (itemCount - 1)] },
-              null
-            ]
-          }
-        }
-      }
+              {
+                $and: [
+                  { $ne: [{ $type: "$prevCheck" }, "missing"] },
+                  { $gt: [{ $size: "$prevCheck" }, 0] },
+                ],
+              },
+              lastId
+                ? { $arrayElemAt: ["$prevCheck._id", itemCount - 1] }
+                : { $arrayElemAt: ["$prevCheck._id", itemCount - 1] },
+              null,
+            ],
+          },
+        },
+      },
     },
     {
       $project: {
         meta: 1,
-        data: 1
-      }
-    }
+        data: 1,
+      },
+    },
   ]);
 
   res.json(aggregate[0]);
@@ -226,15 +230,14 @@ export async function create(req: any, res: any): Promise<void> {
     body: body,
     ip: req.ip,
     timestamp: Date.now(),
-    votes: 0
+    votes: 0,
   });
 
   try {
     await messageEntry.save();
     res.status(200);
     res.json({ message: "Message successfully sent" });
-  } catch (e: any)
-  {
+  } catch (e: any) {
     console.log(e.message);
     res.status(500);
     res.json({ error: "Message was not sent" });

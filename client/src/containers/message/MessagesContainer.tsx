@@ -24,6 +24,16 @@ export default function MessagesContainer() {
 
   useEffect(() => {
     fetchIndex();
+
+    const eventSource = new EventSource(
+      `http://localhost:5173/api/messages/listen`,
+    );
+
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log(data);
+    };
+    return () => eventSource.close();
   }, []);
 
   return (

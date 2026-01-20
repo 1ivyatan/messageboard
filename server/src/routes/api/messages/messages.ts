@@ -4,8 +4,10 @@ import { isIPv6 } from "node:net";
 import { Address6 } from "ip-address";
 
 import * as messagesController from "../../../controllers/messagesController";
+import * as messagesSignaller from "../../../controllers/messagesSignaller";
 
 const messages = express.Router();
+
 const ipv6Subnet: number = isNaN(Number(process.env.SERVER_IPV6_SUBNET))
   ? 56
   : Number(process.env.SERVER_IPV6_SUBNET);
@@ -13,6 +15,8 @@ const ipv6Subnet: number = isNaN(Number(process.env.SERVER_IPV6_SUBNET))
 const postDelay: number = isNaN(Number(process.env.SERVER_POST_DELAY))
   ? 10
   : Number(process.env.SERVER_POST_DELAY);
+
+messages.get("/listen", messagesSignaller.get);
 
 messages.get("/", messagesController.index);
 
