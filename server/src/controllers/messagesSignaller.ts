@@ -11,7 +11,7 @@ export async function get(req: any, res: any) {
       res.write(`data: { "_id": "${app.locals.newPost._id}" }\n\n`);
       app.locals.newPost = null;
     }
-  }, 100);
+  }, 50); /* no idea how to do that better */
   /* ^^^^^^^^^^^^^^^ !!!!!!!!!!!!!!!!! */
 
   req.on("close", () => {
