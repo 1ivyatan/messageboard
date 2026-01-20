@@ -14,7 +14,9 @@ export default function ErrorBoxesContainer() {
   return (
     <div>
       {errors.map((error, index) => {
-        return <ErrorBox text={`${error}`} key={`error_${index}`} />;
+        return (
+          <ErrorBox text={`${error}`} key={`error_${Date.now().toString()}`} />
+        );
       })}
     </div>
   );

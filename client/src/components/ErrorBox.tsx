@@ -1,3 +1,5 @@
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 
 export default function ErrorBox(props: { text: String }) {
@@ -8,7 +10,7 @@ export default function ErrorBox(props: { text: String }) {
       <div>
         <p>{props.text}</p>
         <button type="button" onClick={() => setVisible(false)}>
-          X
+          <FontAwesomeIcon icon={fas.faXmark} />
         </button>
       </div>
     );
