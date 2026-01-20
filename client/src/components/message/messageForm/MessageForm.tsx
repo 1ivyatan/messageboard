@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import useMessagesStore from "../../../stores/messagesStore";
+import useErrorsStore from "../../../stores/errorsStore";
 
 export default function MessageForm() {
   const { sendMessage, postDelay, fetchPostDelay, setPostDelay } =
@@ -13,17 +14,28 @@ export default function MessageForm() {
       })),
     );
 
+  const { clearSetError, clearErrors } = useErrorsStore(
+    useShallow((state) => ({
+      clearErrors: state.clearErrors,
+      clearSetError: state.clearSetError,
+    })),
+  );
+
   const [title, setTitle] = useState<String>("");
   const [body, setBody] = useState<String>("");
   const [canPost, setCanPost] = useState<boolean>(false);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    clearErrors();
 
     if (title.length === 0 || body.length === 0) {
+      clearSetError("Empty fields, write something.");
     } else {
       if (sendMessage(title, body)) {
         setPostDelay(10);
+      } else {
+        clearSetError("Failed to post!");
       }
     }
   };

@@ -31,9 +31,10 @@ interface MessagesState extends MessagesProps {
   fetchPrev: () => void;
   fetchData: (urlExtras: String) => void;
   fetchPostDelay: () => void;
+
   sendVote: (id: String, oldVote: VoteType, newVote: VoteType) => any;
   sendMessage: (title: String, body: String) => any;
-  setPostDelay: (seconds: number) => void;
+  setPostDelay: (seconds: number | null) => void;
 }
 
 const messagesInitialState: MessagesState = {
@@ -41,6 +42,7 @@ const messagesInitialState: MessagesState = {
   meta: metaInitialState,
   status: Status.Loading,
   cursor: cursorInitialState,
+
   postDelay: null,
   fetchIndex: async () => {},
   fetchByCursor: async () => {},
@@ -48,9 +50,10 @@ const messagesInitialState: MessagesState = {
   fetchPrev: async () => {},
   fetchData: async (urlExtras: String) => {},
   fetchPostDelay: async () => {},
+
   sendVote: async (id: String, oldVote: VoteType, newVote: VoteType) => {},
   sendMessage: async (title: String, body: String) => {},
-  setPostDelay: (seconds: number) => {},
+  setPostDelay: (seconds: number | null) => {},
 };
 
 const useMessagesStore = create<MessagesState>()((set, get) => ({
@@ -111,6 +114,7 @@ const useMessagesStore = create<MessagesState>()((set, get) => ({
       const data = await response.json();
       get().setPostDelay(data.delay);
     } else {
+      get().setPostDelay(null);
     }
   },
 
@@ -164,7 +168,7 @@ const useMessagesStore = create<MessagesState>()((set, get) => ({
     }
   },
 
-  setPostDelay: (seconds: number) => {
+  setPostDelay: (seconds: number | null) => {
     set(() => ({
       postDelay: seconds,
     }));

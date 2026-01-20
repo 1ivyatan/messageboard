@@ -4,12 +4,19 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { VoteType } from "../../../types/VoteType";
 import { useRef, useState } from "react";
+import useErrorsStore from "../../../stores/errorsStore";
 
 export default function Voting(props: { no: number }) {
   const { messages, sendVote } = useMessagesStore(
     useShallow((state) => ({
       messages: state.messages,
       sendVote: state.sendVote,
+    })),
+  );
+
+  const { pushError } = useErrorsStore(
+    useShallow((state) => ({
+      pushError: state.pushError,
     })),
   );
 
@@ -53,6 +60,7 @@ export default function Voting(props: { no: number }) {
           break;
       }
     } else {
+      pushError("Failed to vote");
     }
   };
 
