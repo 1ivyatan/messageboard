@@ -10,26 +10,14 @@ import { Status } from "../../types/Status";
 import InfoBox from "../../components/InfoBox";
 import useErrorsStore from "../../stores/errorsStore";
 import { Cursor } from "../../types/Cursor";
+import MessagePagination from "../../components/message/MessagePagination";
 
 export default function MessagesContainer() {
-  const {
-    messages,
-    meta,
-    fetchNext,
-    fetchPrev,
-    fetchIndex,
-    status,
-    messageCursor,
-    fetchByCursor,
-  } = useMessagesStore(
+  const { messages, fetchIndex, status, fetchByCursor } = useMessagesStore(
     useShallow((state) => ({
       messages: state.messages,
-      meta: state.meta,
-      fetchNext: state.fetchNext,
-      fetchPrev: state.fetchPrev,
       fetchIndex: state.fetchIndex,
       status: state.status,
-      messageCursor: state.messageCursor,
       fetchByCursor: state.fetchByCursor,
     })),
   );
@@ -73,26 +61,7 @@ export default function MessagesContainer() {
           {messages.map((message: Message, index: number) => {
             return <MessageBox key={`message_${message._id}`} no={index} />;
           })}
-          <div>
-            <button
-              type="button"
-              disabled={meta.prev === null || meta.prev === ""}
-              onClick={() => {
-                fetchPrev();
-              }}
-            >
-              <FontAwesomeIcon icon={fas.faArrowLeft} />
-            </button>
-            <button
-              type="button"
-              disabled={meta.next === null || meta.next === ""}
-              onClick={() => {
-                fetchNext();
-              }}
-            >
-              <FontAwesomeIcon icon={fas.faArrowRight} />
-            </button>
-          </div>
+          <MessagePagination />
         </div>
       ) : status === Status.Loading ? (
         <InfoBox text="Loading" />
