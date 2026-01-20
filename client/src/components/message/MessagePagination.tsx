@@ -16,6 +16,7 @@ export default function MessagePagination() {
     <div>
       <button
         type="button"
+        className={`${meta.prev === null || meta.prev === "" ? "hidden" : ""}`}
         disabled={meta.prev === null || meta.prev === ""}
         onClick={() => {
           fetchPrev();
@@ -25,6 +26,7 @@ export default function MessagePagination() {
       </button>
       <button
         type="button"
+        className={`${meta.next === null || meta.next === "" ? "hidden" : ""}`}
         disabled={meta.next === null || meta.next === ""}
         onClick={() => {
           fetchNext();
