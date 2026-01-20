@@ -7,7 +7,7 @@ import ErrorBoxesContainer from "./containers/ErrorBoxesContainer";
 
 export default function App() {
   return (
-    <div>
+    <div className="max-w-xl mx-auto">
       <ErrorBoxesContainer />
       <MessageInputContainer />
       <MessagesContainer />

@@ -45,6 +45,7 @@ export default function MessagesContainer() {
 
         if (data._id) {
           fetchByCursor();
+          console.log("new message");
         }
       } catch (e: any) {
         clearSetError("Erroneous message from the server.");
@@ -55,18 +56,22 @@ export default function MessagesContainer() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col">
       {status === Status.Success ? (
-        <div>
-          {messages.map((message: Message, index: number) => {
-            return <MessageBox key={`message_${message._id}`} no={index} />;
-          })}
+        <>
+          {messages.length > 0 ? (
+            messages.map((message: Message, index: number) => {
+              return <MessageBox key={`message_${message._id}`} no={index} />;
+            })
+          ) : (
+            <InfoBox text="No messages yet" />
+          )}
           <MessagePagination />
-        </div>
+        </>
       ) : status === Status.Loading ? (
-        <InfoBox text="Loading" />
+        <InfoBox text="Loading messages" />
       ) : (
-        <InfoBox text="Error loading, contact the webmaster" />
+        <InfoBox text="Error loading messages, contact the webmaster" />
       )}
     </div>
   );

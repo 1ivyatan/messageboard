@@ -11,7 +11,7 @@ export default function MessageInputContainer() {
   );
 
   return (
-    <div>
+    <div className="flex flex-col justify-center border border-gray-300 mb-4 mt-4 box-border px-4 py-2 rounded-sm">
       <MessageForm />
       {postDelay != null && postDelay > 0 && <Timer />}
     </div>

@@ -12,13 +12,13 @@ export default function MessageBox(props: { no: number }) {
   const message = messages[props.no];
 
   return (
-    <div>
-      <div>
-        <span>{message.title}</span>
+    <div className="border border-gray-300 mb-4 box-border px-4 py-2 rounded-sm">
+      <div className="flex place-content-between">
+        <span className="font-bold">{message.title}</span>
         <span>{message.timestamp}</span>
       </div>
       <div>{message.body}</div>
-      <div>
+      <div className="flex flex-row-reverse">
         <Voting no={props.no} />
       </div>
     </div>

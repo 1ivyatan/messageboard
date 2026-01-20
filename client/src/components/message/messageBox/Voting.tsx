@@ -3,7 +3,7 @@ import useMessagesStore from "../../../stores/messagesStore";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { VoteType } from "../../../types/VoteType";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useErrorsStore from "../../../stores/errorsStore";
 
 export default function Voting(props: { no: number }) {
@@ -25,6 +25,10 @@ export default function Voting(props: { no: number }) {
 
   const [vote, setVote] = useState<VoteType | null>();
   const [count, setCount] = useState<number | null>();
+
+  useEffect(() => {
+    setVote(voteData.clientVote);
+  }, []);
 
   const handleVote = async (newVote: VoteType) => {
     const oldVote = vote == null ? voteData.clientVote || VoteType.None : vote;
@@ -65,12 +69,24 @@ export default function Voting(props: { no: number }) {
   };
 
   return (
-    <div>
-      <button type="button" onClick={() => handleVote(VoteType.Up)}>
+    <div className="flex gap-4">
+      <button
+        type="button"
+        onClick={() => handleVote(VoteType.Up)}
+        className={`${vote === VoteType.Up ? "text-green-600" : ""} border cursor-pointer`}
+      >
         <FontAwesomeIcon icon={fas.faArrowUp} />
       </button>
-      <span>{count || voteData.count}</span>
-      <button type="button" onClick={() => handleVote(VoteType.Down)}>
+      <span
+        className={`${(vote === VoteType.Up && "text-green-600") || (vote === VoteType.Down && "text-red-600")}`}
+      >
+        {count || voteData.count}
+      </span>
+      <button
+        type="button"
+        onClick={() => handleVote(VoteType.Down)}
+        className={`${vote === VoteType.Down ? "text-red-600" : ""} border cursor-pointer`}
+      >
         <FontAwesomeIcon icon={fas.faArrowDown} />
       </button>
     </div>

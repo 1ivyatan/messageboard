@@ -9,7 +9,7 @@ export default function Timer() {
   );
 
   return (
-    <div>
+    <div className="text-center">
       <p>{postDelay}</p>
     </div>
   );
