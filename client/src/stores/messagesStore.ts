@@ -13,11 +13,11 @@ const metaInitialState: Meta = {
 
 const cursorInitialState: Cursor = {
   id: null,
-  origin: Pagination.Prev,
+  origin: null,
 };
 
 interface MessagesProps {
-  cursor: Cursor;
+  messageCursor: Cursor;
   messages: Message[];
   meta: Meta;
   status: Status;
@@ -29,7 +29,7 @@ interface MessagesState extends MessagesProps {
   fetchByCursor: () => void;
   fetchNext: () => void;
   fetchPrev: () => void;
-  fetchData: (urlExtras: String) => void;
+  fetchData: (id: String | null, direction: Pagination | null) => void;
   fetchPostDelay: () => void;
 
   sendVote: (id: String, oldVote: VoteType, newVote: VoteType) => any;
@@ -41,14 +41,14 @@ const messagesInitialState: MessagesState = {
   messages: [],
   meta: metaInitialState,
   status: Status.Loading,
-  cursor: cursorInitialState,
+  messageCursor: cursorInitialState,
 
   postDelay: null,
   fetchIndex: async () => {},
   fetchByCursor: async () => {},
   fetchNext: async () => {},
   fetchPrev: async () => {},
-  fetchData: async (urlExtras: String) => {},
+  fetchData: async (id: String | null, direction: Pagination | null) => {},
   fetchPostDelay: async () => {},
 
   sendVote: async (id: String, oldVote: VoteType, newVote: VoteType) => {},
@@ -59,12 +59,12 @@ const messagesInitialState: MessagesState = {
 const useMessagesStore = create<MessagesState>()((set, get) => ({
   ...messagesInitialState,
 
-  fetchData: async (urlExtras: String) => {
+  fetchData: async (id: String | null, direction: Pagination | null) => {
     set(() => ({
       status: Status.Loading,
     }));
 
-    const url = `${import.meta.env.VITE_API_BASE || "/api"}/messages${urlExtras}`;
+    const url = `${import.meta.env.VITE_API_BASE || "/api"}/messages${direction != null && id != null ? `?${direction}=${id}` : ""}`;
     const response = await fetch(url);
 
     if (response.ok) {
@@ -74,6 +74,13 @@ const useMessagesStore = create<MessagesState>()((set, get) => ({
         messages: data.data,
         meta: data.meta,
         status: Status.Success,
+        messageCursor:
+          direction != null && id != null
+            ? {
+                origin: direction,
+                id: id,
+              }
+            : cursorInitialState,
       }));
     } else {
       set(() => ({
@@ -86,14 +93,20 @@ const useMessagesStore = create<MessagesState>()((set, get) => ({
   },
 
   fetchIndex: async () => {
-    get().fetchData("");
+    get().fetchData(null, null);
+  },
+
+  fetchByCursor: async () => {
+    const cursor = get().messageCursor;
+    get().fetchData(cursor.id, cursor.origin);
   },
 
   fetchNext: async () => {
     const next = get().meta.next;
 
     if (next !== null && next !== "") {
-      get().fetchData(`?${Pagination.Next}=${get().meta.next}`);
+      get().fetchData(get().meta.next, Pagination.Next);
+      console.log(get().messageCursor);
     }
   },
 
@@ -101,7 +114,14 @@ const useMessagesStore = create<MessagesState>()((set, get) => ({
     const prev = get().meta.prev;
 
     if (prev !== null && prev !== "") {
-      get().fetchData(`?${Pagination.Prev}=${get().meta.prev}`);
+      get().fetchData(get().meta.prev, Pagination.Prev);
+      set((state) => ({
+        ...state,
+        cursor: {
+          origin: Pagination.Prev,
+          id: prev,
+        },
+      }));
     }
   },
 

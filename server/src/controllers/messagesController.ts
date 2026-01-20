@@ -1,6 +1,7 @@
 import express from "express";
 import { PipelineStage, Types } from "mongoose";
 import { messageModel } from "../models/message";
+import app from "..";
 
 const itemCount: number = 10;
 
@@ -167,6 +168,12 @@ export async function index(req: any, res: any): Promise<void> {
 
       aggregation.unshift(matchStage);
     }
+  } else if (lastId != null && firstId != null) {
+    res.code(401);
+    res.json({
+      error: "Cannot use both lastId and firstId at same time",
+    });
+    res.end();
   }
 
   const aggregate = await messageModel.aggregate([
@@ -218,12 +225,19 @@ export async function index(req: any, res: any): Promise<void> {
   ]);
 
   res.json(aggregate[0]);
-
   res.end();
 }
 
 export async function create(req: any, res: any): Promise<void> {
   const { title, body } = req.body ?? {};
+
+  if (!title || !body) {
+    res.code(401);
+    res.json({
+      error: "Title and body must be filled",
+    });
+    res.end();
+  }
 
   const messageEntry = new messageModel({
     title: title,
@@ -234,9 +248,13 @@ export async function create(req: any, res: any): Promise<void> {
   });
 
   try {
-    await messageEntry.save();
+    const newPost = await messageEntry.save();
     res.status(200);
     res.json({ message: "Message successfully sent" });
+
+    /* vvvvvvv !!! */
+    app.locals.newPost = newPost;
+    /* ^^^^^^^ !!!*/
   } catch (e: any) {
     console.log(e.message);
     res.status(500);

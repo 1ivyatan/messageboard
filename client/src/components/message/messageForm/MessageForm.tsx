@@ -34,6 +34,8 @@ export default function MessageForm() {
     } else {
       if (sendMessage(title, body)) {
         setPostDelay(10);
+        setTitle("");
+        setBody("");
       } else {
         clearSetError("Failed to post!");
       }
@@ -61,10 +63,17 @@ export default function MessageForm() {
 
   return (
     <form action="#" onSubmit={handleSubmit}>
-      <input type="text" onChange={(e) => setTitle(e.target.value)} />
-      <textarea onChange={(e) => setBody(e.target.value)}></textarea>
+      <input
+        type="text"
+        onChange={(e) => setTitle(e.target.value)}
+        value={`${title}`}
+      />
+      <textarea
+        onChange={(e) => setBody(e.target.value)}
+        value={`${body}`}
+      ></textarea>
       <button disabled={!canPost} type="submit">
-        Submit
+        Send
       </button>
     </form>
   );

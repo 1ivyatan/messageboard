@@ -8,32 +8,62 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { Status } from "../../types/Status";
 import InfoBox from "../../components/InfoBox";
+import useErrorsStore from "../../stores/errorsStore";
+import { Cursor } from "../../types/Cursor";
 
 export default function MessagesContainer() {
-  const { messages, meta, fetchNext, fetchPrev, fetchIndex, status } =
-    useMessagesStore(
-      useShallow((state) => ({
-        messages: state.messages,
-        meta: state.meta,
-        fetchNext: state.fetchNext,
-        fetchPrev: state.fetchPrev,
-        fetchIndex: state.fetchIndex,
-        status: state.status,
-      })),
-    );
+  const {
+    messages,
+    meta,
+    fetchNext,
+    fetchPrev,
+    fetchIndex,
+    status,
+    messageCursor,
+    fetchByCursor,
+  } = useMessagesStore(
+    useShallow((state) => ({
+      messages: state.messages,
+      meta: state.meta,
+      fetchNext: state.fetchNext,
+      fetchPrev: state.fetchPrev,
+      fetchIndex: state.fetchIndex,
+      status: state.status,
+      messageCursor: state.messageCursor,
+      fetchByCursor: state.fetchByCursor,
+    })),
+  );
+
+  const { clearSetError } = useErrorsStore(
+    useShallow((state) => ({
+      clearSetError: state.clearSetError,
+    })),
+  );
+
+  const [cursor, setCursor] = useState<Cursor | null>(null);
+
+  useEffect(() => {}, [messages]);
 
   useEffect(() => {
     fetchIndex();
 
-    const eventSource = new EventSource(
-      `http://localhost:5173/api/messages/listen`,
+    const newMessageListener = new EventSource(
+      `${import.meta.env.VITE_API_BASE || "/api"}/messages/listen`,
     );
 
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log(data);
+    newMessageListener.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+
+        if (data._id) {
+          fetchByCursor();
+        }
+      } catch (e: any) {
+        clearSetError("Erroneous message from the server.");
+      }
     };
-    return () => eventSource.close();
+
+    return () => newMessageListener.close();
   }, []);
 
   return (
@@ -47,14 +77,18 @@ export default function MessagesContainer() {
             <button
               type="button"
               disabled={meta.prev === null || meta.prev === ""}
-              onClick={fetchPrev}
+              onClick={() => {
+                fetchPrev();
+              }}
             >
               <FontAwesomeIcon icon={fas.faArrowLeft} />
             </button>
             <button
               type="button"
               disabled={meta.next === null || meta.next === ""}
-              onClick={fetchNext}
+              onClick={() => {
+                fetchNext();
+              }}
             >
               <FontAwesomeIcon icon={fas.faArrowRight} />
             </button>

@@ -38,3 +38,6 @@ mongoose
   .catch((error) => {
     console.error(`Error connecting to MongoDB: ${error}`);
   });
+
+/* vvvvvvv!!!!!!!!!!!!!!!vvvvvvvvvvv */
+export default app;
